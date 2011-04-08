@@ -1,0 +1,12 @@
+*.pidb
+Temp
+.DS_Store
+Library/ScriptAssemblies
+*.userprefs
+Build
+*.csproj
+*.sln
+Library/InspectorExpandedItems.asset
+TestResults
+Library/expandedItems
+TestResult.xml
