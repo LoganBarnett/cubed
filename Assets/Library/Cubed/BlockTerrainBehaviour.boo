@@ -6,15 +6,19 @@ import Cubed
 
 [RequireComponent(MeshFilter)]
 [RequireComponent(MeshRenderer)]
+[RequireComponent(MeshCollider)]
 class BlockTerrainBehaviour(MonoBehaviour): 
-	public chunkWidth = 10f;
-	public blockWidth = 10f;
+	public chunkWidth = 10
+	public chunkHeight = 10
+	public chunkDepth = 10
+	public blockWidth = 8f
 	
 	blockTerrain as BlockTerrain;
 	
 	def Start():
-		blockTerrain = BlockTerrain(ChunkWidth: chunkWidth);
-		blocks = blockTerrain.GenerateBlockGrid()
+		blockTerrain = BlockTerrain(ChunkWidth: chunkWidth, ChunkHeight: chunkHeight, ChunkDepth: chunkDepth)
+		# just create a full chunk for testing
+		blocks = blockTerrain.GenerateFilledBlockGrid()
 		renderableBlocks = blockTerrain.GenerateRenderableBlocks(blocks)
 		
 		vertices = List[of Vector3]()
@@ -30,6 +34,12 @@ class BlockTerrainBehaviour(MonoBehaviour):
 #		meshFilter.mesh.uv = vertices.Select({v| Vector2(v.x, v.z)}).ToArray()
 #		meshFilter.mesh.normals = mesh
 		meshFilter.mesh.RecalculateNormals()
+		
+		meshCollider = GetComponent[of MeshCollider]()
+		meshCollider.sharedMesh = meshFilter.mesh
+	
+	def RemoveBlock(blockLocation as Vector3i):
+		pass
 	
 	def Update():
 		pass
