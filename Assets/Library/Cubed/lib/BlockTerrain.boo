@@ -15,6 +15,9 @@ class BlockTerrain:
   [Property(BlockMaterial)]
   blockMaterial as Material
   
+  [Property(FloorMaterial)]
+  floorMaterial as Material
+  
   [Property(BlockWidth)]
   blockWidth = 10f
   
@@ -25,64 +28,44 @@ class BlockTerrain:
         for z in range(ChunkDepth):
           grid[x, y, z] = Block()
     return grid
-    
-  # TODO: pass an triangle count by ref so we know how far we are with triangles
-  def CalculateRenderableBlock(x as int, y as int, z as int, ref vertexCount as int, blocks as (Block, 3)):
-    renderableBlock = RenderableBlock(BlockWidth: blockWidth)
-    block = blocks[x,y,z]
-    return renderableBlock if block == null
-    
-    gridPosition = Vector3i(x, y, z)
-    renderableBlock.CalculateRenderableProperties(gridPosition, vertexCount, blocks)
-    
-    return renderableBlock
-    
-  def GenerateRenderableBlocks(blocks as (Block, 3)):
-    renderableblocks = List[of RenderableBlock]()
-    vertexCount = 0
-    for x in range(len(blocks, 0)):
-      for y in range(len(blocks, 1)):
-        for z in range(len(blocks, 2)):
-          renderableBlock = CalculateRenderableBlock(x, y, z, vertexCount, blocks)
-          renderableblocks.Add(renderableBlock)
-    return renderableblocks.ToArray()
-    
+        
   def GenerateChunks(chunksWide as int, chunksHigh as int):
     for x in range(chunksWide):
       for y in range(chunksHigh):
-        GenerateChunk(x, y)
+        GenerateChunk(x, y, null)
   
   def MakeChunk():
     gameObject = GameObject()
     gameObject.AddComponent(MeshFilter)
     gameObject.AddComponent(MeshCollider)
     gameObject.AddComponent(MeshRenderer)
+    chunkComponent = gameObject.AddComponent(Chunk)
+    chunkComponent.BlockWidth = blockWidth
+    chunkComponent.BlockMaterial = blockMaterial
     gameObject.name = "Chunk"
     return gameObject
     
-  def GenerateChunk(x as int, y as int):
-    blocks = GenerateFilledBlockGrid()
-    renderableBlocks = GenerateRenderableBlocks(blocks)
+  def GenerateChunk(x as int, y as int, blocks as (Block, 3)):
+    blocks = GenerateFilledBlockGrid() if blocks == null
     
     chunk = MakeChunk()
     chunk.transform.position = Vector3(x * chunkWidth * blockWidth, 0f, y * chunkDepth * blockWidth)
-    vertices = List[of Vector3]()
-    triangles = List[of int]()
-    for block in renderableBlocks:
-      vertices.AddRange(block.Vertices)
-      triangles.AddRange(block.Triangles)
+    chunk.GetComponent of Chunk().Generate(blocks)
+  
+  def MakeBarrier():
+    return GameObject.CreatePrimitive(PrimitiveType.Cube);
     
-    meshRenderer = chunk.renderer #chunk.GetComponent of MeshRenderer()
-
-    meshRenderer.materials = (blockMaterial,)
+  def GenerateBarriers(chunksWide as int, chunksHigh as int):
+    GenerateGroundBarriers(chunksWide, chunksHigh)
     
-    meshFilter = chunk.GetComponent[of MeshFilter]()
-    meshFilter.mesh.Clear()
-    meshFilter.mesh.vertices = vertices.ToArray()
-    meshFilter.mesh.triangles = triangles.ToArray()
-#   meshFilter.mesh.uv = vertices.Select({v| Vector2(v.x, v.z)}).ToArray()
-#   meshFilter.mesh.normals = mesh
-    meshFilter.mesh.RecalculateNormals()
-    
-    meshCollider = chunk.GetComponent[of MeshCollider]()
-    meshCollider.sharedMesh = meshFilter.mesh
+  def GenerateGroundBarriers(chunksWide as int, chunksHigh as int):
+    for chunkX in range(chunksWide):
+      for chunkZ in range(chunksHigh):
+        barrier = MakeBarrier()
+        barrier.renderer.material = floorMaterial
+        barrier.transform.localScale = Vector3(chunkWidth * blockWidth, blockWidth, chunkDepth * blockWidth)
+        x = (chunkX * chunkWidth * blockWidth) + ((chunkWidth * blockWidth) / 2f)
+        z = chunkZ * chunkDepth * blockWidth + ((chunkDepth * blockWidth) / 2f)
+        #y = -(chunkHeight * blockWidth / 4f)
+        y = -blockWidth / 2f
+        barrier.transform.position = Vector3(x, y, z)

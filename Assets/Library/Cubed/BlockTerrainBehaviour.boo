@@ -15,13 +15,18 @@ class BlockTerrainBehaviour(MonoBehaviour):
   public chunkDepth = 10
   public blockWidth = 8f
   public blockMaterial as Material
+  public wallMaterial as Material
+  public floorMaterial as Material
   
   blockTerrain as BlockTerrain;
   
   def Start():
-    blockTerrain = BlockTerrain(BlockWidth: blockWidth, ChunkWidth: chunkWidth, ChunkHeight: chunkHeight, ChunkDepth: chunkDepth, BlockMaterial: blockMaterial)
+    # TODO: This is getting painful
+    # Make chunk height/depth/width into WorldDimensions property
+    blockTerrain = BlockTerrain(BlockWidth: blockWidth, ChunkWidth: chunkWidth, ChunkHeight: chunkHeight, ChunkDepth: chunkDepth, BlockMaterial: blockMaterial, FloorMaterial: floorMaterial)
     # just create a full chunk for testing
     blockTerrain.GenerateChunks(chunksWide, chunksHigh)
+    blockTerrain.GenerateBarriers(chunksWide, chunksHigh)
   
   def RemoveBlock(blockLocation as Vector3i):
     pass
