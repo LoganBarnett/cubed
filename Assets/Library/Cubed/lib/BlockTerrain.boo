@@ -5,6 +5,9 @@ import System.Linq.Enumerable
 import System.Collections.Generic
 
 class BlockTerrain:
+  [Property(BlockWidth)]
+  blockWidth = 10f
+  
   [Property(ChunkWidth)]
   chunkWidth = 10
   [Property(ChunkHeight)]
@@ -14,15 +17,17 @@ class BlockTerrain:
   
   [Property(BlockMaterial)]
   blockMaterial as Material
-  
   [Property(FloorMaterial)]
   floorMaterial as Material
-
   [Property(WallMaterial)]
-  wallMaterial as Material  
-
-  [Property(BlockWidth)]
-  blockWidth = 10f
+  wallMaterial as Material
+  
+  [Property(ShowFloor)]
+  showFloor = true
+  
+  [Property(ShowWalls)]
+  showWalls = true
+  
   
   def GenerateFilledBlockGrid():
     grid = matrix(Block, ChunkWidth, ChunkHeight, ChunkDepth)
@@ -67,6 +72,7 @@ class BlockTerrain:
     for chunkX in range(chunksWide):
       barrier = MakeBarrier()
       barrier.name = "Wall"
+      barrier.renderer.enabled = showWalls
       barrier.renderer.material = wallMaterial
       barrier.transform.localScale = Vector3(chunkWidth * blockWidth, blockWidth * chunkHeight * 2f, blockWidth)
       x = (chunkX * chunkWidth * blockWidth) + ((chunkWidth * blockWidth) / 2f)
@@ -78,6 +84,7 @@ class BlockTerrain:
     for chunkX in range(chunksWide):
       barrier = MakeBarrier()
       barrier.name = "Wall"
+      barrier.renderer.enabled = showWalls
       barrier.renderer.material = wallMaterial
       barrier.transform.localScale = Vector3(chunkWidth * blockWidth, blockWidth * chunkHeight * 2f, blockWidth)
       x = (chunkX * chunkWidth * blockWidth) + ((chunkWidth * blockWidth) / 2f)
@@ -89,6 +96,7 @@ class BlockTerrain:
     for chunkZ in range(chunksDeep):
       barrier = MakeBarrier()
       barrier.name = "Wall"
+      barrier.renderer.enabled = showWalls
       barrier.renderer.material = wallMaterial
       barrier.transform.localScale = Vector3(blockWidth, blockWidth * chunkHeight * 2f, chunkDepth * blockWidth)
       x = -blockWidth / 2f
@@ -100,6 +108,7 @@ class BlockTerrain:
     for chunkZ in range(chunksDeep):
       barrier = MakeBarrier()
       barrier.name = "Wall"
+      barrier.renderer.enabled = showWalls
       barrier.renderer.material = wallMaterial
       barrier.transform.localScale = Vector3(blockWidth, blockWidth * chunkHeight * 2f, chunkDepth * blockWidth)
       x = (chunkDepth * blockWidth * chunksWide) + (blockWidth / 2f)
@@ -113,6 +122,7 @@ class BlockTerrain:
       for chunkZ in range(chunksDeep):
         barrier = MakeBarrier()
         barrier.name = "Ground"
+        barrier.renderer.enabled = showFloor
         barrier.renderer.material = floorMaterial
         barrier.transform.localScale = Vector3(chunkWidth * blockWidth, blockWidth, chunkDepth * blockWidth)
         x = (chunkX * chunkWidth * blockWidth) + ((chunkWidth * blockWidth) / 2f)

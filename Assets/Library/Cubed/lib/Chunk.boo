@@ -37,9 +37,11 @@ class Chunk(MonoBehaviour):
     renderableBlocks = GenerateRenderableBlocks(blocks)
     vertices = List[of Vector3]()
     triangles = List[of int]()
+    uvs = List of Vector2()
     for block in renderableBlocks:
       vertices.AddRange(block.Vertices)
       triangles.AddRange(block.Triangles)
+      uvs.AddRange(block.Uvs)
 
     renderer.materials = (blockMaterial,)
     
@@ -47,9 +49,9 @@ class Chunk(MonoBehaviour):
     meshFilter.mesh.Clear()
     meshFilter.mesh.vertices = vertices.ToArray()
     meshFilter.mesh.triangles = triangles.ToArray()
-    uvs = CalculateUvs(vertices)
+    #uvs = CalculateUvs(vertices)
 #   meshFilter.mesh.uv = vertices.Select({v| Vector2(v.x, v.z)}).ToArray()
-    meshFilter.mesh.uv = uvs
+    meshFilter.mesh.uv = uvs.ToArray()
 #   meshFilter.mesh.normals = mesh
     meshFilter.mesh.RecalculateNormals()
     

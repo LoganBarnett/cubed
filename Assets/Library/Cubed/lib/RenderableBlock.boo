@@ -10,6 +10,9 @@ class RenderableBlock:
   [Property(Triangles)]
   triangles = List[of int]()
   
+  [Property(Uvs)]
+  uvs = List of Vector2()
+  
   # is there ever a desire to have a non-uniform grid size (x/y/z different)?
   [Property(BlockWidth)]
   blockWidth as single
@@ -29,11 +32,12 @@ class RenderableBlock:
     AddBack(position, vertexCount)   unless AdjacentBlockExists(blocks, gridPosition.Back)
   
   def AddBottom(position as Vector3, ref vertexCount as int):
-    Vertices.Add(position)
     Vertices.Add(Vector3(position.x + blockWidth, position.y, position.z))
-    Vertices.Add(Vector3(position.x, position.y, position.z + blockWidth))
     Vertices.Add(Vector3(position.x + blockWidth, position.y, position.z + blockWidth))
-    
+    Vertices.Add(position)
+    Vertices.Add(Vector3(position.x, position.y, position.z + blockWidth))
+
+    AddUvs()
     AddTriangles(vertexCount)
     vertexCount += 4;
   
@@ -43,6 +47,7 @@ class RenderableBlock:
     Vertices.Add(Vector3(position.x + blockWidth, position.y + blockWidth, position.z))
     Vertices.Add(Vector3(position.x + blockWidth, position.y + blockWidth, position.z + blockWidth))
     
+    AddUvs()
     AddTriangles(vertexCount)
     vertexCount += 4;
   
@@ -52,24 +57,28 @@ class RenderableBlock:
     Vertices.Add(Vector3(position.x + blockWidth, position.y, position.z + blockWidth))
     Vertices.Add(Vector3(position.x + blockWidth, position.y + blockWidth, position.z + blockWidth))
     
+    AddUvs()
     AddTriangles(vertexCount)
     vertexCount += 4;
   
   def AddLeft(position as Vector3, ref vertexCount as int):
-    Vertices.Add(Vector3(position.x, position.y, position.z))
-    Vertices.Add(Vector3(position.x, position.y, position.z + blockWidth))
-    Vertices.Add(Vector3(position.x, position.y + blockWidth, position.z))
-    Vertices.Add(Vector3(position.x, position.y + blockWidth, position.z + blockWidth))
     
+    Vertices.Add(Vector3(position.x, position.y, position.z + blockWidth))
+    Vertices.Add(Vector3(position.x, position.y + blockWidth, position.z + blockWidth))
+    Vertices.Add(Vector3(position.x, position.y, position.z))
+    Vertices.Add(Vector3(position.x, position.y + blockWidth, position.z))
+ 
+    AddUvs()
     AddTriangles(vertexCount)
     vertexCount += 4;
   
   def AddFront(position as Vector3, ref vertexCount as int):
-    Vertices.Add(Vector3(position.x, position.y, position.z + blockWidth))
     Vertices.Add(Vector3(position.x + blockWidth, position.y, position.z + blockWidth))
-    Vertices.Add(Vector3(position.x, position.y + blockWidth, position.z + blockWidth))
     Vertices.Add(Vector3(position.x + blockWidth, position.y + blockWidth, position.z + blockWidth))
+    Vertices.Add(Vector3(position.x, position.y, position.z + blockWidth))
+    Vertices.Add(Vector3(position.x, position.y + blockWidth, position.z + blockWidth))
     
+    AddUvs()
     AddTriangles(vertexCount)
     vertexCount += 4;
   
@@ -79,9 +88,16 @@ class RenderableBlock:
     Vertices.Add(Vector3(position.x + blockWidth, position.y, position.z))
     Vertices.Add(Vector3(position.x + blockWidth, position.y + blockWidth, position.z))
     
+    AddUvs()
     AddTriangles(vertexCount)
     vertexCount += 4;
   
+  def AddUvs():
+    Uvs.Add(Vector2(0f, 0f))
+    Uvs.Add(Vector2(0f, 1f))
+    Uvs.Add(Vector2(1f, 0f))
+    Uvs.Add(Vector2(1f, 1f))
+    
   def AddTriangles(vertexCount as int):
     # need this order to appear on outside of cube
     newTriangles = (0, 1, 2, 1, 3, 2) .Select({i| i + vertexCount})
