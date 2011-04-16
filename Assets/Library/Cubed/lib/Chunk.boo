@@ -56,10 +56,31 @@ class Chunk(MonoBehaviour):
     meshFilter.mesh.RecalculateNormals()
     
     meshCollider = GetComponent[of MeshCollider]()
-    meshCollider.sharedMesh = meshFilter.mesh
+    meshCollider.mesh = null
+    meshCollider.mesh = meshFilter.mesh
     
     GetComponent of Chunk().blocks = blocks
     
   def CalculateUvs(vertices as IEnumerable of Vector3):
     #planar coordinates
-    return vertices.Select({v| Vector2(v.x, v.z)}).ToArray() 
+    return vertices.Select({v| Vector2(v.x, v.z)}).ToArray()
+    
+  def GetBlockAt(worldPosition as Vector3):
+    localPosition = worldPosition - transform.position
+
+    #blockPosition = Vector3(localPosition.x / chunkWidth, localPosition.y / chunkHeight, localPosition.z / chunkDepth)
+    blockPosition = localPosition / blockWidth
+    Debug.Log(blockPosition)
+    blockIndexes = Vector3i(blockPosition.x, blockPosition.y, blockPosition.z)
+    Debug.Log(blockIndexes)
+    block = blocks[blockIndexes.x, blockIndexes.y, blockIndexes.z]
+    return null if block == null
+    block.Chunk = self
+    block.Indexes = blockIndexes
+    return block
+    
+  def RemoveBlock(blockLocation as Vector3i):
+    block = blocks[blockLocation.x, blockLocation.y, blockLocation.z]
+    blocks[blockLocation.x, blockLocation.y, blockLocation.z] = null
+    Generate(blocks)
+    return block

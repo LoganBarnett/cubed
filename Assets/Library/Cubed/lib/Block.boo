@@ -1,4 +1,8 @@
 namespace Cubed
 
 class Block:
-	pass
+  [Property(Indexes)]
+  indexes as Vector3i
+  
+  [Property(Chunk)]
+  chunk as Chunk

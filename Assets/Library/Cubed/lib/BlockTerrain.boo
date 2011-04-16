@@ -60,9 +60,24 @@ class BlockTerrain:
     chunk.transform.position = Vector3(x * chunkWidth * blockWidth, 0f, y * chunkDepth * blockWidth)
     chunk.GetComponent of Chunk().Generate(blocks)
   
+  def GetBlockAt(ray as Ray, distance as single):
+    hit = RaycastHit()
+    return null unless Physics.Raycast(ray, hit, distance)
+    
+    worldPoint = hit.point + ray.direction # need to overpenetrate a little
+    chunkCollider = hit.collider as Collider # somehow Boo can't find the type, so specify it
+    chunk = chunkCollider.GetComponent of Chunk()
+    return null if chunk == null
+    
+    block = chunk.GetBlockAt(worldPoint)
+
+    return block
+    
+  
   def MakeBarrier():
     return GameObject.CreatePrimitive(PrimitiveType.Cube);
-    
+  
+  # TODO: Consider refactoring out of Cubed - this may be app specific
   def GenerateBarriers(chunksWide as int, chunksDeep as int):
     GenerateGroundBarriers(chunksWide, chunksDeep)
     GenerateSideBarriers(chunksWide, chunksDeep)

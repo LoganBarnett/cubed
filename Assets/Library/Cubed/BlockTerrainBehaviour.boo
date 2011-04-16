@@ -30,8 +30,14 @@ class BlockTerrainBehaviour(MonoBehaviour):
     blockTerrain.GenerateChunks(chunksWide, chunksHigh)
     blockTerrain.GenerateBarriers(chunksWide, chunksHigh)
   
-  def RemoveBlock(blockLocation as Vector3i):
-    pass
+  def GetBlockAt(ray as Ray, distance as single):
+    return blockTerrain.GetBlockAt(ray, distance)
+
+  
+  def RemoveBlockAt(ray as Ray, digDistance as single):
+    block = blockTerrain.GetBlockAt(ray, digDistance)
+    return null if block == null
+    return block.Chunk.RemoveBlock(block.Indexes)
   
   def Update():
     pass
