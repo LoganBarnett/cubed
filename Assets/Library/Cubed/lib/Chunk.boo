@@ -56,8 +56,8 @@ class Chunk(MonoBehaviour):
     meshFilter.mesh.RecalculateNormals()
     
     meshCollider = GetComponent[of MeshCollider]()
-    meshCollider.mesh = null
-    meshCollider.mesh = meshFilter.mesh
+    meshCollider.sharedMesh = null
+    meshCollider.sharedMesh = meshFilter.mesh
     
     GetComponent of Chunk().blocks = blocks
     
@@ -70,9 +70,7 @@ class Chunk(MonoBehaviour):
 
     #blockPosition = Vector3(localPosition.x / chunkWidth, localPosition.y / chunkHeight, localPosition.z / chunkDepth)
     blockPosition = localPosition / blockWidth
-    Debug.Log(blockPosition)
     blockIndexes = Vector3i(blockPosition.x, blockPosition.y, blockPosition.z)
-    Debug.Log(blockIndexes)
     block = blocks[blockIndexes.x, blockIndexes.y, blockIndexes.z]
     return null if block == null
     block.Chunk = self
