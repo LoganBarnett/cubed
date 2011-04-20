@@ -1,8 +1,8 @@
 namespace Cubed
 
 import UnityEngine
-import System.Linq.Enumerable
-import System.Collections.Generic
+#import System.Linq.Enumerable
+#import System.Collections.Generic
 
 class BlockTerrain:
   [Property(BlockWidth)]
@@ -24,9 +24,14 @@ class BlockTerrain:
   
   [Property(ShowFloor)]
   showFloor = true
-  
   [Property(ShowWalls)]
   showWalls = true
+  
+#  [Property(CurrentProgress)]
+#  currentProgress = 0
+  
+#  [Property(TotalProgress)]
+#  totalProgress = 0
   
   
   def GenerateFilledBlockGrid():
@@ -45,7 +50,7 @@ class BlockTerrain:
   def MakeChunk():
     gameObject = GameObject()
     gameObject.AddComponent(MeshFilter)
-    gameObject.AddComponent(MeshCollider)
+#    gameObject.AddComponent(MeshCollider)
     gameObject.AddComponent(MeshRenderer)
     chunkComponent = gameObject.AddComponent(Chunk)
     chunkComponent.BlockWidth = blockWidth
@@ -64,15 +69,13 @@ class BlockTerrain:
     hit = RaycastHit()
     return null unless Physics.Raycast(ray, hit, distance)
     
-    worldPoint = hit.point + ray.direction # need to overpenetrate a little
+    worldPoint = hit.point + (ray.direction * 0.1f) # need to overpenetrate a little
     chunkCollider = hit.collider as Collider # somehow Boo can't find the type, so specify it
-    chunk = chunkCollider.GetComponent of Chunk()
-    return null if chunk == null
-    
+    blockBehaviour = chunkCollider.GetComponent of BlockBehaviour()
+    return null if blockBehaviour == null
+    chunk = blockBehaviour.block.Chunk
     block = chunk.GetBlockAt(worldPoint)
-
     return block
-    
   
   def MakeBarrier():
     return GameObject.CreatePrimitive(PrimitiveType.Cube);

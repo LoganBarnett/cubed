@@ -1,7 +1,7 @@
 namespace Cubed
 
 import UnityEngine
-import System.Linq.Enumerable
+#import System.Linq.Enumerable
 import System.Collections.Generic
 
 class Chunk(MonoBehaviour):
@@ -14,31 +14,38 @@ class Chunk(MonoBehaviour):
   blockMaterial as Material
   
   def CalculateRenderableBlock(x as int, y as int, z as int, ref vertexCount as int, blocks as (Block, 3)):
-    renderableBlock = RenderableBlock(BlockWidth: blockWidth)
-    block = blocks[x,y,z]
-    return renderableBlock if block == null
-    
     gridPosition = Vector3i(x, y, z)
-    renderableBlock.CalculateRenderableProperties(gridPosition, vertexCount, blocks)
+    block = blocks[x,y,z]
+    return null if block == null
+    block.BlockWidth = blockWidth
+    block.Indexes = gridPosition
     
-    return renderableBlock
+    block.Chunk = self
+    block.Calculate(gridPosition, vertexCount, blocks)
+    return block
     
   def GenerateRenderableBlocks(blocks as (Block, 3)):
-    renderableblocks = List[of RenderableBlock]()
     vertexCount = 0
     for x in range(len(blocks, 0)):
       for y in range(len(blocks, 1)):
         for z in range(len(blocks, 2)):
-          renderableBlock = CalculateRenderableBlock(x, y, z, vertexCount, blocks)
-          renderableblocks.Add(renderableBlock)
-    return renderableblocks.ToArray()
+          blocks[x,y,z] = CalculateRenderableBlock(x, y, z, vertexCount, blocks)
+    return blocks
   
-  def Generate(blocks as (Block, 3)):
-    renderableBlocks = GenerateRenderableBlocks(blocks)
+  def Generate(blocksToGenerate as (Block, 3)):
+    if blocks != null:
+      for x in range(len(blocks, 0)):
+        for y in range(len(blocks, 1)):
+          for z in range(len(blocks, 2)):
+            GameObject.Destroy(blocks[x,y,z].GameObject) if blocksToGenerate[x,y,z] == null and blocks[x,y,z] and blocks[x,y,z].GameObject != null
+
+
+    blocks = GenerateRenderableBlocks(blocksToGenerate)
     vertices = List[of Vector3]()
     triangles = List[of int]()
     uvs = List of Vector2()
-    for block in renderableBlocks:
+    for block in blocks: # works well for matrixes
+      continue if block == null
       vertices.AddRange(block.Vertices)
       triangles.AddRange(block.Triangles)
       uvs.AddRange(block.Uvs)
@@ -49,36 +56,23 @@ class Chunk(MonoBehaviour):
     meshFilter.mesh.Clear()
     meshFilter.mesh.vertices = vertices.ToArray()
     meshFilter.mesh.triangles = triangles.ToArray()
-    #uvs = CalculateUvs(vertices)
-#   meshFilter.mesh.uv = vertices.Select({v| Vector2(v.x, v.z)}).ToArray()
     meshFilter.mesh.uv = uvs.ToArray()
-#   meshFilter.mesh.normals = mesh
     meshFilter.mesh.RecalculateNormals()
-    
-    meshCollider = GetComponent[of MeshCollider]()
-    meshCollider.sharedMesh = null
-    meshCollider.sharedMesh = meshFilter.mesh
-    
-    GetComponent of Chunk().blocks = blocks
-    
-  def CalculateUvs(vertices as IEnumerable of Vector3):
-    #planar coordinates
-    return vertices.Select({v| Vector2(v.x, v.z)}).ToArray()
     
   def GetBlockAt(worldPosition as Vector3):
     localPosition = worldPosition - transform.position
 
-    #blockPosition = Vector3(localPosition.x / chunkWidth, localPosition.y / chunkHeight, localPosition.z / chunkDepth)
     blockPosition = localPosition / blockWidth
     blockIndexes = Vector3i(blockPosition.x, blockPosition.y, blockPosition.z)
     block = blocks[blockIndexes.x, blockIndexes.y, blockIndexes.z]
-    return null if block == null
-    block.Chunk = self
-    block.Indexes = blockIndexes
     return block
     
   def RemoveBlock(blockLocation as Vector3i):
     block = blocks[blockLocation.x, blockLocation.y, blockLocation.z]
-    blocks[blockLocation.x, blockLocation.y, blockLocation.z] = null
-    Generate(blocks)
+    if block.GameObject == null:
+      raise System.Exception("Missing game object on block to be destroyed (${block.Indexes.x}, ${block.Indexes.y}, ${block.Indexes.z})")
+    GameObject.Destroy(block.GameObject)
+    newBlocks = blocks.Clone() as (Block, 3)
+    newBlocks[blockLocation.x, blockLocation.y, blockLocation.z] = null
+    Generate(newBlocks)
     return block
