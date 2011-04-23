@@ -5,46 +5,48 @@ import UnityEngine
 import System.Collections.Generic
 
 class Chunk(MonoBehaviour):
-  public blocks as (Block, 3)
+  public cubes as (Cube, 3)
+  public x = 0
+  public y = 0
   
-  [Property(BlockWidth)]
+  [Property(CubeWidth)]
   blockWidth = 10f
   
-  [Property(BlockMaterial)]
+  [Property(CubeMaterial)]
   blockMaterial as Material
   
-  def CalculateRenderableBlock(x as int, y as int, z as int, ref vertexCount as int, blocks as (Block, 3)):
+  def CalculateRenderableCube(x as int, y as int, z as int, ref vertexCount as int, cubes as (Cube, 3)):
     gridPosition = Vector3i(x, y, z)
-    block = blocks[x,y,z]
-    return null if block == null
-    block.BlockWidth = blockWidth
-    block.Indexes = gridPosition
+    cube = cubes[x,y,z]
+    return null if cube == null
+    cube.CubeWidth = blockWidth
+    cube.Indexes = gridPosition
     
-    block.Chunk = self
-    block.Calculate(gridPosition, vertexCount, blocks)
-    return block
+    cube.Chunk = self
+    cube.Calculate(gridPosition, vertexCount, cubes)
+    return cube
     
-  def GenerateRenderableBlocks(blocks as (Block, 3)):
+  def GenerateRenderableCubes(cubes as (Cube, 3)):
     vertexCount = 0
-    for x in range(len(blocks, 0)):
-      for y in range(len(blocks, 1)):
-        for z in range(len(blocks, 2)):
-          blocks[x,y,z] = CalculateRenderableBlock(x, y, z, vertexCount, blocks)
-    return blocks
+    for x in range(len(cubes, 0)):
+      for y in range(len(cubes, 1)):
+        for z in range(len(cubes, 2)):
+          cubes[x,y,z] = CalculateRenderableCube(x, y, z, vertexCount, cubes)
+    return cubes
   
-  def Generate(blocksToGenerate as (Block, 3)):
-    if blocks != null:
-      for x in range(len(blocks, 0)):
-        for y in range(len(blocks, 1)):
-          for z in range(len(blocks, 2)):
-            GameObject.Destroy(blocks[x,y,z].GameObject) if blocksToGenerate[x,y,z] == null and blocks[x,y,z] and blocks[x,y,z].GameObject != null
+  def Generate(cubesToGenerate as (Cube, 3)):
+    if cubes != null:
+      for x in range(len(cubes, 0)):
+        for y in range(len(cubes, 1)):
+          for z in range(len(cubes, 2)):
+            GameObject.Destroy(cubes[x,y,z].GameObject) if cubesToGenerate[x,y,z] == null and cubes[x,y,z] and cubes[x,y,z].GameObject != null
 
 
-    blocks = GenerateRenderableBlocks(blocksToGenerate)
+    cubes = GenerateRenderableCubes(cubesToGenerate)
     vertices = List[of Vector3]()
     triangles = List[of int]()
     uvs = List of Vector2()
-    for block in blocks: # works well for matrixes
+    for block in cubes: # works well for matrixes
       continue if block == null
       vertices.AddRange(block.Vertices)
       triangles.AddRange(block.Triangles)
@@ -59,20 +61,24 @@ class Chunk(MonoBehaviour):
     meshFilter.mesh.uv = uvs.ToArray()
     meshFilter.mesh.RecalculateNormals()
     
-  def GetBlockAt(worldPosition as Vector3):
-    localPosition = worldPosition - transform.position
-
-    blockPosition = localPosition / blockWidth
-    blockIndexes = Vector3i(blockPosition.x, blockPosition.y, blockPosition.z)
-    block = blocks[blockIndexes.x, blockIndexes.y, blockIndexes.z]
+  def GetCubeAt(blockLocation as Vector3i):
+    return cubes[blockLocation.x - (x * len(cubes, 0)), blockLocation.y, blockLocation.z - (y * len(cubes, 1))]
+  
+  def AddCube(blockLocation as Vector3i, blockGameObject as GameObject):
+    # TODO: fix the error - this doesn't actually catch anything
+    raise System.Exception("Cannot add: A block already exists at ${blockLocation}") if cubes[blockLocation.x, blockLocation.y, blockLocation.z] != null
+    newCubes = cubes.Clone() as (Cube, 3)
+    block = Cube(CubeWidth: blockWidth, Chunk: self, GameObject: blockGameObject)
+    newCubes[blockLocation.x, blockLocation.y, blockLocation.z] = block
+    Generate(newCubes)
     return block
     
-  def RemoveBlock(blockLocation as Vector3i):
-    block = blocks[blockLocation.x, blockLocation.y, blockLocation.z]
+  def RemoveCube(blockLocation as Vector3i):
+    block = cubes[blockLocation.x, blockLocation.y, blockLocation.z]
     if block.GameObject == null:
       raise System.Exception("Missing game object on block to be destroyed (${block.Indexes.x}, ${block.Indexes.y}, ${block.Indexes.z})")
     GameObject.Destroy(block.GameObject)
-    newBlocks = blocks.Clone() as (Block, 3)
-    newBlocks[blockLocation.x, blockLocation.y, blockLocation.z] = null
-    Generate(newBlocks)
+    newCubes = cubes.Clone() as (Cube, 3)
+    newCubes[blockLocation.x, blockLocation.y, blockLocation.z] = null
+    Generate(newCubes)
     return block

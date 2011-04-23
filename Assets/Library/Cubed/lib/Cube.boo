@@ -3,7 +3,7 @@ namespace Cubed
 import UnityEngine
 import System.Collections.Generic
 
-class Block:
+class Cube:
   [Property(Vertices)]
   vertices = List[of Vector3]()
   [Property(Triangles)]
@@ -19,13 +19,14 @@ class Block:
   gameObject as GameObject
   
   # is there ever a desire to have a non-uniform grid size (x/y/z different)?
-  [Property(BlockWidth)]
+  [Property(CubeWidth)]
   blockWidth as single
   
   generateCollider = false
   
   def CreateCollision():
     self.gameObject = GameObject()
+    gameObject.tag = "cubed_cube"
     gameObject.AddComponent of BoxCollider()
     collider = gameObject.collider as BoxCollider
     collider.size = Vector3(blockWidth, blockWidth, blockWidth)
@@ -33,12 +34,12 @@ class Block:
     halfSize = Vector3(blockWidth, blockWidth, blockWidth) / 2f
     blockPosition = chunk.transform.position + offsetInChunk + halfSize
     
-    gameObject.AddComponent of BlockBehaviour().block = self
+    gameObject.AddComponent of CubeBehaviour().cube = self
     
     gameObject.transform.position = blockPosition
-    gameObject.name = "Block Collider (${indexes.x}, ${indexes.y}, ${indexes.z})"
+    gameObject.name = "Cube Collider (${indexes.x}, ${indexes.y}, ${indexes.z})"
   
-  def Calculate(gridPosition as Vector3i, ref vertexCount as int, blocks as (Block, 3)):
+  def Calculate(gridPosition as Vector3i, ref vertexCount as int, cubes as (Cube, 3)):
     # clear out the old data
     vertices.Clear()
     triangles.Clear()
@@ -50,12 +51,12 @@ class Block:
     
     position = Vector3(vx, vy, vz)
     
-    AddBottom(position, vertexCount) unless AdjacentBlockExists(blocks, gridPosition.Down)
-    AddTop(position, vertexCount)    unless AdjacentBlockExists(blocks, gridPosition.Up)
-    AddRight(position, vertexCount)  unless AdjacentBlockExists(blocks, gridPosition.Right)
-    AddLeft(position, vertexCount)   unless AdjacentBlockExists(blocks, gridPosition.Left)
-    AddFront(position, vertexCount)  unless AdjacentBlockExists(blocks, gridPosition.Front)
-    AddBack(position, vertexCount)   unless AdjacentBlockExists(blocks, gridPosition.Back)
+    AddBottom(position, vertexCount) unless AdjacentCubeExists(cubes, gridPosition.Down)
+    AddTop(position, vertexCount)    unless AdjacentCubeExists(cubes, gridPosition.Up)
+    AddRight(position, vertexCount)  unless AdjacentCubeExists(cubes, gridPosition.Right)
+    AddLeft(position, vertexCount)   unless AdjacentCubeExists(cubes, gridPosition.Left)
+    AddFront(position, vertexCount)  unless AdjacentCubeExists(cubes, gridPosition.Front)
+    AddBack(position, vertexCount)   unless AdjacentCubeExists(cubes, gridPosition.Back)
     
     generateCollider = false if gameObject
     CreateCollision() if generateCollider
@@ -138,11 +139,11 @@ class Block:
     newTriangles = (0, 1, 2, 1, 3, 2) .Select({i| i + vertexCount})
     Triangles.AddRange(newTriangles)
   
-  def GetBlock(blocks as (Block, 3), position as Vector3i):
+  def GetCube(cubes as (Cube, 3), position as Vector3i):
     try:
-      return blocks[position.x, position.y, position.z]
+      return cubes[position.x, position.y, position.z]
     except e as System.IndexOutOfRangeException:
       return null
   
-  def AdjacentBlockExists(blocks as (Block, 3), adjacentPosition as Vector3i):
-    return GetBlock(blocks, adjacentPosition) != null
+  def AdjacentCubeExists(cubes as (Cube, 3), adjacentPosition as Vector3i):
+    return GetCube(cubes, adjacentPosition) != null
