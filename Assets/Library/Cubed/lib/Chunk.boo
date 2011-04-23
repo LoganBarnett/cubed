@@ -68,10 +68,10 @@ class Chunk(MonoBehaviour):
     # TODO: fix the error - this doesn't actually catch anything
     raise System.Exception("Cannot add: A block already exists at ${blockLocation}") if cubes[blockLocation.x, blockLocation.y, blockLocation.z] != null
     newCubes = cubes.Clone() as (Cube, 3)
-    block = Cube(CubeWidth: blockWidth, Chunk: self, GameObject: blockGameObject)
-    newCubes[blockLocation.x, blockLocation.y, blockLocation.z] = block
+    cube = Cube(CubeWidth: blockWidth, Chunk: self, GameObject: blockGameObject)
+    newCubes[blockLocation.x, blockLocation.y, blockLocation.z] = cube
     Generate(newCubes)
-    return block
+    return cube
     
   def RemoveCube(blockLocation as Vector3i):
     block = cubes[blockLocation.x, blockLocation.y, blockLocation.z]

@@ -37,7 +37,7 @@ class Cube:
     gameObject.AddComponent of CubeBehaviour().cube = self
     
     gameObject.transform.position = blockPosition
-    gameObject.name = "Cube Collider (${indexes.x}, ${indexes.y}, ${indexes.z})"
+    gameObject.name = GetCubeName(indexes)
   
   def Calculate(gridPosition as Vector3i, ref vertexCount as int, cubes as (Cube, 3)):
     # clear out the old data
@@ -58,8 +58,15 @@ class Cube:
     AddFront(position, vertexCount)  unless AdjacentCubeExists(cubes, gridPosition.Front)
     AddBack(position, vertexCount)   unless AdjacentCubeExists(cubes, gridPosition.Back)
     
-    generateCollider = false if gameObject
+    if gameObject:
+      generateCollider = false 
+      gameObject.active = true
+      gameObject.name = GetCubeName(gridPosition)
+      
     CreateCollision() if generateCollider
+  
+  def GetCubeName(gridPosition as Vector3i):
+    return "Cube Collider (${gridPosition.x}, ${gridPosition.y}, ${gridPosition.z})"
   
   def AddBottom(position as Vector3, ref vertexCount as int):
     Vertices.Add(Vector3(position.x + blockWidth, position.y, position.z))
