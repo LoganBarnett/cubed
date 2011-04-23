@@ -59,9 +59,8 @@ class Cube:
     AddBack(position, vertexCount)   unless AdjacentCubeExists(cubes, gridPosition.Back)
     
     if gameObject:
-      generateCollider = false 
-      gameObject.active = true
-      gameObject.name = GetCubeName(gridPosition)
+      generateCollider = true
+      GameObject.Destroy(gameObject)
       
     CreateCollision() if generateCollider
   
