@@ -15,6 +15,9 @@ class Chunk(MonoBehaviour):
   [Property(CubeMaterial)]
   blockMaterial as Material
   
+  [Property(CubeLegend)]
+  cubeLegend as CubeLegend
+  
   def CalculateRenderableCube(x as int, y as int, z as int, ref vertexCount as int, cubes as (Cube, 3)):
     gridPosition = Vector3i(x, y, z)
     cube = cubes[x,y,z]
@@ -23,7 +26,7 @@ class Chunk(MonoBehaviour):
     cube.Indexes = gridPosition
     
     cube.Chunk = self
-    cube.Calculate(gridPosition, vertexCount, cubes)
+    cube.Calculate(gridPosition, vertexCount, cubes, cubeLegend)
     return cube
     
   def GenerateRenderableCubes(cubes as (Cube, 3)):

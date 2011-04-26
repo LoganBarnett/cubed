@@ -18,6 +18,9 @@ class CubeTerrain:
   [Property(ChunkDepth)]
   chunkDepth = 10
   
+  [Property(CubeLegend)]
+  cubeLegend as CubeLegend
+  
   [Property(CubeMaterial)]
   blockMaterial as Material
   
@@ -53,6 +56,7 @@ class CubeTerrain:
     chunkComponent.CubeMaterial = blockMaterial
     gameObject.name = "Chunk"
     gameObject.tag = "cubed_chunk"
+    chunkComponent.CubeLegend = cubeLegend
     return gameObject
     
   def GetCubePointAt(worldPosition as Vector3):
@@ -105,5 +109,6 @@ class CubeTerrain:
     blockBehaviour = chunkCollider.GetComponent of CubeBehaviour()
     return null if blockBehaviour == null
     chunk = blockBehaviour.cube.Chunk
+    return null if not chunk
     cube = chunk.GetCubeAt(GetCubePointAt(worldPoint))
     return cube
