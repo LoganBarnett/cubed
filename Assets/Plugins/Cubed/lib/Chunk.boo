@@ -65,7 +65,7 @@ class Chunk(MonoBehaviour):
     meshFilter.mesh.RecalculateNormals()
     
   def GetCubeAt(blockLocation as Vector3i):
-    return cubes[blockLocation.x - (x * len(cubes, 0)), blockLocation.y, blockLocation.z - (y * len(cubes, 1))]
+    return cubes[blockLocation.x - (x * len(cubes, 0)), blockLocation.y, blockLocation.z - (y * len(cubes, 2))]
   
   def AddCube(blockLocation as Vector3i, blockGameObject as GameObject):
     # TODO: fix the error - this doesn't actually catch anything

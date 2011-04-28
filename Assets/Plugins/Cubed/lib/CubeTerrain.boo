@@ -105,7 +105,7 @@ class CubeTerrain:
     x = indexes.x / chunkWidth
     y = indexes.z / chunkDepth
     chunk = chunks[Vector3i(x, 0, y)]
-    relativeLocation = Vector3i(indexes.x - (chunkWidth * x), indexes.y, indexes.z - (chunkHeight * y))
+    relativeLocation = Vector3i(indexes.x - (chunkWidth * x), indexes.y, indexes.z - (chunkDepth * y))
     chunk.AddCube(relativeLocation, cube)
       
   def GetCubeAt(ray as Ray, distance as single):
