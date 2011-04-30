@@ -71,7 +71,8 @@ class Chunk(MonoBehaviour):
     # TODO: fix the error - this doesn't actually catch anything
     raise System.Exception("Cannot add: A block already exists at ${blockLocation}") if cubes[blockLocation.x, blockLocation.y, blockLocation.z] != null
     newCubes = cubes.Clone() as (Cube, 3)
-    cube = Cube(CubeWidth: blockWidth, Chunk: self, GameObject: blockGameObject)
+    originalCube = blockGameObject.GetComponent of CubeBehaviour().cube
+    cube = Cube(CubeWidth: blockWidth, Chunk: self, GameObject: blockGameObject, Type: originalCube.Type)
     newCubes[blockLocation.x, blockLocation.y, blockLocation.z] = cube
     Generate(newCubes)
     return cube

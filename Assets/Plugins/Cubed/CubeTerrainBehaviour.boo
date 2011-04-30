@@ -27,28 +27,25 @@ class CubeTerrainBehaviour(MonoBehaviour):
   
   cubeTerrain as CubeTerrain;
   
-  def Start():
+  def Awake():
+    Generate() if cubeTerrain == null
+    
+  def Generate():
     # TODO: This is getting painful
     # Make chunk height/depth/width into WorldDimensions property
     cubeLegend = CubeLegend(TextureAtlas: textureAtlas, CubeDefinitions: cubeDefinitions)
     cubeTerrain = CubeTerrain(CubeWidth: blockWidth, ChunkWidth: chunkWidth, ChunkHeight: chunkHeight, ChunkDepth: chunkDepth, CubeMaterial: material, CubeLegend: cubeLegend)
     # just create a full chunk for testing
     cubeTerrain.GenerateChunks(chunksWide, chunksHigh, cubeTerrain.GenerateFilledCubeGrid())
-    #cubeTerrain.GenerateBarriers(chunksWide, chunksHigh)
   
-  def GetCubeAt(ray as Ray, distance as single):
-    return cubeTerrain.GetCubeAt(ray, distance)
+  def GetCubeAt(position as Vector3):
+    return cubeTerrain.GetCubeAt(position)
   
-  def RemoveCubeAt(ray as Ray, digDistance as single):
-    cube = cubeTerrain.GetCubeAt(ray, digDistance)
+  def RemoveCubeAt(position as Vector3):
+    cube = cubeTerrain.GetCubeAt(position)
     return null if cube == null
     return cube.Chunk.RemoveCube(cube.Indexes)
   
-  def PlaceCubeOnChunk(aimingRay as Ray, placeDistance as single, cube as GameObject):
-    hit = RaycastHit()
-    return false unless Physics.Raycast(aimingRay, hit, placeDistance)
-    if hit.collider.CompareTag("cubed_cube"):
-      cubePlacement = cubeTerrain.GetCubePlacement(aimingRay, placeDistance)
-      cubeTerrain.PlaceCube(cubePlacement, cube)
-      return true
-    return false
+  def PlaceCubeAt(worldPosition as Vector3, cube as GameObject):
+    cubePlacement = cubeTerrain.GetCubePointAt(worldPosition)
+    cubeTerrain.PlaceCube(cubePlacement, cube)

@@ -10,8 +10,8 @@ class CubeLegend:
   [Property(TextureAtlas)]
   textureAtlas as (Rect)
 
-  def UvsFor(side as Direction):
-    coords = textureAtlas[cast(int, side)]
+  def UvsFor(type as int, side as Direction):
+    coords = textureAtlas[cast(int, side) + (type * 6)]
     #topLeft     = Vector2(coords.y, coords.x)
     #topRight    = Vector2(coords.y, coords.x + coords.width)
     #bottomLeft  = Vector2(coords.y + coords.height, coords.x)
@@ -22,8 +22,8 @@ class CubeLegend:
     bottomRight = Vector2(coords.x + coords.width, coords.y + coords.height)
     return (topLeft, topRight, bottomLeft, bottomRight)
     
-  def AllUvs():
+  def AllUvs(type as int):
     uvs = List of Vector2()
     for i in range(0, 5):
-      uvs.AddRange(UvsFor(i))
+      uvs.AddRange(UvsFor(type, i))
     return uvs.ToArray()

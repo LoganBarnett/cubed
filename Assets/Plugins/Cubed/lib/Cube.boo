@@ -77,7 +77,7 @@ class Cube:
     Vertices.Add(position)
     Vertices.Add(Vector3(position.x, position.y, position.z + blockWidth))
 
-    Uvs.AddRange(cubeLegend.UvsFor(Direction.Down))
+    Uvs.AddRange(cubeLegend.UvsFor(type, Direction.Down))
     AddTriangles(vertexCount)
     generateCollider = true
     vertexCount += 4;
@@ -88,7 +88,7 @@ class Cube:
     Vertices.Add(Vector3(position.x + blockWidth, position.y + blockWidth, position.z))
     Vertices.Add(Vector3(position.x + blockWidth, position.y + blockWidth, position.z + blockWidth))
     
-    Uvs.AddRange(cubeLegend.UvsFor(Direction.Up))
+    Uvs.AddRange(cubeLegend.UvsFor(type, Direction.Up))
     AddTriangles(vertexCount)
     generateCollider = true
     vertexCount += 4;
@@ -99,7 +99,7 @@ class Cube:
     Vertices.Add(Vector3(position.x + blockWidth, position.y, position.z + blockWidth))
     Vertices.Add(Vector3(position.x + blockWidth, position.y + blockWidth, position.z + blockWidth))
     
-    Uvs.AddRange(cubeLegend.UvsFor(Direction.Right))
+    Uvs.AddRange(cubeLegend.UvsFor(type, Direction.Right))
     AddTriangles(vertexCount)
     generateCollider = true
     vertexCount += 4;
@@ -110,7 +110,7 @@ class Cube:
     Vertices.Add(Vector3(position.x, position.y, position.z))
     Vertices.Add(Vector3(position.x, position.y + blockWidth, position.z))
  
-    Uvs.AddRange(cubeLegend.UvsFor(Direction.Left))
+    Uvs.AddRange(cubeLegend.UvsFor(type, Direction.Left))
     AddTriangles(vertexCount)
     generateCollider = true
     vertexCount += 4;
@@ -121,7 +121,7 @@ class Cube:
     Vertices.Add(Vector3(position.x, position.y, position.z + blockWidth))
     Vertices.Add(Vector3(position.x, position.y + blockWidth, position.z + blockWidth))
     
-    Uvs.AddRange(cubeLegend.UvsFor(Direction.Front))
+    Uvs.AddRange(cubeLegend.UvsFor(type, Direction.Front))
     AddTriangles(vertexCount)
     generateCollider = true
     vertexCount += 4;
@@ -132,7 +132,7 @@ class Cube:
     Vertices.Add(Vector3(position.x + blockWidth, position.y, position.z))
     Vertices.Add(Vector3(position.x + blockWidth, position.y + blockWidth, position.z))
     
-    Uvs.AddRange(cubeLegend.UvsFor(Direction.Back))
+    Uvs.AddRange(cubeLegend.UvsFor(type, Direction.Back))
     AddTriangles(vertexCount)
     generateCollider = true
     vertexCount += 4;

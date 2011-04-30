@@ -47,7 +47,9 @@ class CubeTerrain:
     for x in range(ChunkWidth):
       for y in range(ChunkHeight / 2):
         for z in range(ChunkDepth):
-          grid[x, y, z] = Cube()
+          cube = Cube()
+          cube.Type = x % 2
+          grid[x, y, z] = cube
     return grid
     
   def GenerateChunks(chunksWide as int, chunksDeep as int, cubes as (Cube, 3)):
@@ -84,39 +86,25 @@ class CubeTerrain:
     chunks[Vector3i(x, 0, y)] = chunk
     chunk.Generate(cubes)
   
-  def GetCubePlacement(ray as Ray, distance as single):
-    # cast a ray
-    #determine the block hit
-    # determine which side of block hit
-    # give back location of block
-    hit = RaycastHit()
-    return null unless Physics.Raycast(ray, hit, distance)
-
-    worldPoint = hit.point - (ray.direction * 0.1f) # need to underpenetrate a little
-    
-    chunkCollider = hit.collider as Collider # somehow Boo can't find the type, so specify it
-    blockBehaviour = chunkCollider.GetComponent of CubeBehaviour()
-    return null if blockBehaviour == null
-#    chunk = blockBehaviour.cube.Chunk
-    vector = GetCubePointAt(worldPoint)
-    return vector
-    
   def PlaceCube(indexes as Vector3i, cube as GameObject):
     x = indexes.x / chunkWidth
     y = indexes.z / chunkDepth
     chunk = chunks[Vector3i(x, 0, y)]
     relativeLocation = Vector3i(indexes.x - (chunkWidth * x), indexes.y, indexes.z - (chunkDepth * y))
     chunk.AddCube(relativeLocation, cube)
-      
-  def GetCubeAt(ray as Ray, distance as single):
-    hit = RaycastHit()
-    return null unless Physics.Raycast(ray, hit, distance)
+  
+  def GetChunkAt(position as Vector3):
+    return chunks[Vector3i(position.x / (ChunkWidth * CubeWidth), position.y / (ChunkHeight * CubeWidth), position.z / (ChunkDepth * CubeWidth))]
     
-    worldPoint = hit.point + (ray.direction * 0.1f) # need to overpenetrate a little
-    chunkCollider = hit.collider as Collider # somehow Boo can't find the type, so specify it
-    blockBehaviour = chunkCollider.GetComponent of CubeBehaviour()
-    return null if blockBehaviour == null
-    chunk = blockBehaviour.cube.Chunk
-    return null if not chunk
-    cube = chunk.GetCubeAt(GetCubePointAt(worldPoint))
+  def GetCubeAt(position as Vector3):
+#    chunkCollider = hit.collider as Collider # somehow Boo can't find the type, so specify it
+#    blockBehaviour = chunkCollider.GetComponent of CubeBehaviour()
+    
+    #return null if blockBehaviour == null
+    #chunk = blockBehaviour.cube.Chunk
+    #return null if not chunk
+    
+    chunk = GetChunkAt(position)
+    cube = chunk.GetCubeAt(GetCubePointAt(position))
+    #Debug.Log("Found cube " + cube.GameObject.name)
     return cube
