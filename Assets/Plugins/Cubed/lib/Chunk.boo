@@ -1,22 +1,36 @@
-namespace Cubed
-
+import Cubed
 import UnityEngine
 #import System.Linq.Enumerable
 import System.Collections.Generic
 
 class Chunk(MonoBehaviour):
+  public serializedCubes as List of Cube
   public cubes as (Cube, 3)
   public x = 0
   public y = 0
+  public dimensionsInCubes as Vector3i
   
   [Property(CubeWidth)]
-  blockWidth = 10f
+  public blockWidth = 10f
   
   [Property(CubeMaterial)]
-  blockMaterial as Material
+  public blockMaterial as Material
   
   [Property(CubeLegend)]
-  cubeLegend as CubeLegend
+  public cubeLegend as CubeLegend
+  
+#  def Awake():
+#    for childTransform as Transform in transform:
+#      cubeBehaviour = childTransform.gameObject.GetComponent of CubeBehaviour()
+#      continue unless cubeBehaviour
+#      indexes = cubeBehaviour.cube.indexes
+#      cubes[indexes.x, indexes.y, indexes.z] = cubes.cube
+
+  def Awake():
+    # all for Unity's serialization
+    cubes = matrix(Cube, dimensionsInCubes.x, dimensionsInCubes.y, dimensionsInCubes.z)
+    for cube in serializedCubes:
+      cubes[cube.indexes.x, cube.indexes.y, cube.indexes.z] = cube
   
   def CalculateRenderableCube(x as int, y as int, z as int, ref vertexCount as int, cubes as (Cube, 3)):
     gridPosition = Vector3i(x, y, z)
@@ -63,6 +77,10 @@ class Chunk(MonoBehaviour):
     meshFilter.mesh.triangles = triangles.ToArray()
     meshFilter.mesh.uv = uvs.ToArray()
     meshFilter.mesh.RecalculateNormals()
+    
+    serializedCubes = List of Cube()
+    for cube in cubes:
+      serializedCubes.Add(cube)
     
   def GetCubeAt(blockLocation as Vector3i):
     return cubes[blockLocation.x - (x * len(cubes, 0)), blockLocation.y, blockLocation.z - (y * len(cubes, 2))]

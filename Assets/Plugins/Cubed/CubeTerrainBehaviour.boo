@@ -1,5 +1,6 @@
 import UnityEngine
 import System.Linq.Enumerable
+
 #import System.Collections.Generic
 
 import Cubed
@@ -25,19 +26,30 @@ class CubeTerrainBehaviour(MonoBehaviour):
   
   public cubeLegend as CubeLegend
   
-  cubeTerrain as CubeTerrain;
+  public cubeTerrain as CubeTerrain;
   
   def Awake():
-    Generate() if cubeTerrain == null
+    cubeTerrain.Initialize()
+    #Generate() if cubeTerrain == null
     
   def Generate():
+    DestroyChildren() # patricide?
     # TODO: This is getting painful
     # Make chunk height/depth/width into WorldDimensions property
     cubeLegend = CubeLegend(TextureAtlas: textureAtlas, CubeDefinitions: cubeDefinitions)
     cubeTerrain = CubeTerrain(CubeWidth: blockWidth, ChunkWidth: chunkWidth, ChunkHeight: chunkHeight, ChunkDepth: chunkDepth, CubeMaterial: material, CubeLegend: cubeLegend)
+    cubeTerrain.GameObject = gameObject
     # just create a full chunk for testing
     cubeTerrain.GenerateChunks(chunksWide, chunksHigh, cubeTerrain.GenerateFilledCubeGrid())
   
+  def DestroyChildren():
+    children = List of GameObject()
+    for childTransform as Transform in transform:
+      children.Add(childTransform.gameObject)
+    for child in children:
+      Debug.Log("Destroying ${child.name}")
+      GameObject.DestroyImmediate(child)
+
   def GetCubeAt(position as Vector3):
     return cubeTerrain.GetCubeAt(position)
   

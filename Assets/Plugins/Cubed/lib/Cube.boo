@@ -3,23 +3,24 @@ namespace Cubed
 import UnityEngine
 import System.Collections.Generic
 
+[System.Serializable]
 class Cube:
   [Property(Type)]
-  type = 0
+  public type = 0
   
   [Property(Vertices)]
-  vertices = List[of Vector3]()
+  public vertices = List[of Vector3]()
   [Property(Triangles)]
-  triangles = List[of int]()
+  public triangles = List[of int]()
   [Property(Uvs)]
-  uvs = List of Vector2()
+  public uvs = List of Vector2()
   
   [Property(Indexes)]
-  indexes as Vector3i
+  public indexes as Vector3i
   [Property(Chunk)]
-  chunk as Chunk
+  public chunk as Chunk
   [Property(GameObject)]
-  gameObject as GameObject
+  public gameObject as GameObject
   
   # is there ever a desire to have a non-uniform grid size (x/y/z different)?
   [Property(CubeWidth)]
@@ -38,11 +39,13 @@ class Cube:
     if chunk:
       blockPosition = chunk.transform.position + offsetInChunk + halfSize
       gameObject.transform.position = blockPosition
-
+      gameObject.transform.parent = chunk.transform
+    
     gameObject.AddComponent of CubeBehaviour().cube = self
     gameObject.name = GetCubeName(indexes)
   
   def Calculate(gridPosition as Vector3i, ref vertexCount as int, cubes as (Cube, 3), cubeLegend as CubeLegend):
+    CubeGeneratorProgressEditor.ReportCube(Vector3i(chunk.x, chunk.y, 0f), gridPosition)
     # clear out the old data
     vertices.Clear()
     triangles.Clear()

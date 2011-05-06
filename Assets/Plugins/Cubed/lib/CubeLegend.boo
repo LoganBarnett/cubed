@@ -3,12 +3,13 @@ namespace Cubed
 import UnityEngine
 import System.Collections.Generic
 
+[System.Serializable]
 class CubeLegend:
   [Property(CubeDefinitions)]
-  cubeDefinitions as (CubeDefinition)
+  public cubeDefinitions as (CubeDefinition)
 
   [Property(TextureAtlas)]
-  textureAtlas as (Rect)
+  public textureAtlas as (Rect)
 
   def UvsFor(type as int, side as Direction):
     coords = textureAtlas[cast(int, side) + (type * 6)]

@@ -4,35 +4,48 @@ import UnityEngine
 #import System.Linq.Enumerable
 import System.Collections.Generic
 
+[System.Serializable]
 class CubeTerrain:
+  [Property(GameObject)]
+  public gameObject as GameObject
+  
   [Property(CubeWidth)]
-  blockWidth = 10f
+  public blockWidth as int #= 10f
   
   # TODO: Switch to this
   #[Property(ChunkDimensions)]
   #chunkDimensions as Vector3i
   [Property(ChunkWidth)]
-  chunkWidth = 10
+  public chunkWidth as int #= 10
   [Property(ChunkHeight)]
-  chunkHeight = 10
+  public chunkHeight as int #= 10
   [Property(ChunkDepth)]
-  chunkDepth = 10
+  public chunkDepth  as int #= 10
   
   [Property(CubeLegend)]
-  cubeLegend as CubeLegend
+  public cubeLegend as CubeLegend
   
   [Property(CubeMaterial)]
-  blockMaterial as Material
+  public blockMaterial as Material
   
-  chunks = Dictionary[of Vector3i, Chunk]()
-
+  # oh Unity, if only you could serialize Dictionaries, I would love you longer than the stars
+  # etc
+  public chunkVectors as List of Vector3i
+  public chunkChunks as List of Chunk
+  
+  chunks as Dictionary[of Vector3i, Chunk]
   
 #  [Property(CurrentProgress)]
 #  currentProgress = 0
   
 #  [Property(TotalProgress)]
 #  totalProgress = 0
-  
+    
+  def Initialize():
+    chunks = Dictionary[of Vector3i, Chunk]()
+    if chunkVectors and chunkChunks:
+      for i in range(0, chunkVectors.Count - 1):
+        chunks[chunkVectors[i]] = chunkChunks[i]
   
   def GenerateFilledCubeGrid():
     grid = matrix(Cube, ChunkWidth, ChunkHeight, ChunkDepth)
@@ -53,21 +66,32 @@ class CubeTerrain:
     return grid
     
   def GenerateChunks(chunksWide as int, chunksDeep as int, cubes as (Cube, 3)):
+    cubedObjectDimensions = Vector3i(chunksWide, chunksDeep, 0)
+    chunkDimensions = Vector3i(chunkWidth, chunkHeight, chunkDepth)
+    CubeGeneratorProgressEditor.Start(cubedObjectDimensions, chunkDimensions)
+    
+    chunks = Dictionary[of Vector3i, Chunk]()
     for x in range(chunksWide):
       for y in range(chunksDeep):
         GenerateChunk(x, y, null)
+    
+    chunkVectors = chunks.Keys.ToList()
+    chunkChunks = chunks.Values.ToList()
+    
+    CubeGeneratorProgressEditor.End()
   
   def MakeChunk():
-    gameObject = GameObject()
-    gameObject.AddComponent(MeshFilter)
-    gameObject.AddComponent(MeshRenderer)
-    chunkComponent = gameObject.AddComponent(Chunk)
+    chunkGameObject = GameObject()
+    chunkGameObject.AddComponent(MeshFilter)
+    chunkGameObject.AddComponent(MeshRenderer)
+    chunkComponent = chunkGameObject.AddComponent(Chunk)
     chunkComponent.CubeWidth = blockWidth
     chunkComponent.CubeMaterial = blockMaterial
-    gameObject.name = "Chunk"
-    gameObject.tag = "cubed_chunk"
+    chunkGameObject.name = "Chunk"
+    chunkGameObject.tag = "cubed_chunk"
     chunkComponent.CubeLegend = cubeLegend
-    return gameObject
+    chunkGameObject.transform.parent = gameObject.transform
+    return chunkGameObject
     
   def GetCubePointAt(worldPosition as Vector3):
     blockPosition = worldPosition / blockWidth
@@ -75,16 +99,20 @@ class CubeTerrain:
     return blockIndexes
         
   def GenerateChunk(x as int, y as int, cubes as (Cube, 3)):
+    CubeGeneratorProgressEditor.ReportChunk(Vector3i(x, y, 0f))
     cubes = GenerateHalfFilledCubeGrid() if cubes == null
     
     chunkGameObject = MakeChunk()
     chunkGameObject.transform.position = Vector3(x * chunkWidth * blockWidth, 0f, y * chunkDepth * blockWidth)
     chunkGameObject.name = "Chunk ${x}, ${y}"
     chunk = chunkGameObject.GetComponent of Chunk()
+    
+    chunk.dimensionsInCubes = Vector3i(chunkWidth, chunkHeight, chunkDepth)
     chunk.x = x
     chunk.y = y
     chunks[Vector3i(x, 0, y)] = chunk
     chunk.Generate(cubes)
+
   
   def PlaceCube(indexes as Vector3i, cube as GameObject):
     x = indexes.x / chunkWidth
@@ -94,7 +122,11 @@ class CubeTerrain:
     chunk.AddCube(relativeLocation, cube)
   
   def GetChunkAt(position as Vector3):
-    return chunks[Vector3i(position.x / (ChunkWidth * CubeWidth), position.y / (ChunkHeight * CubeWidth), position.z / (ChunkDepth * CubeWidth))]
+    x = position.x / (ChunkWidth * CubeWidth)
+    y = position.y / (ChunkHeight * CubeWidth)
+    z = position.z / (ChunkDepth * CubeWidth)
+    key = Vector3i(x, y, z)
+    return chunks[key]
     
   def GetCubeAt(position as Vector3):
 #    chunkCollider = hit.collider as Collider # somehow Boo can't find the type, so specify it
