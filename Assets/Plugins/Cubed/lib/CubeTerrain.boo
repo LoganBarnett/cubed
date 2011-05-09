@@ -44,7 +44,7 @@ class CubeTerrain:
   def Initialize():
     chunks = Dictionary[of Vector3i, Chunk]()
     if chunkVectors and chunkChunks:
-      for i in range(0, chunkVectors.Count - 1):
+      for i in range(0, chunkVectors.Count):
         chunks[chunkVectors[i]] = chunkChunks[i]
   
   def GenerateFilledCubeGrid():
@@ -122,10 +122,11 @@ class CubeTerrain:
     chunk.AddCube(relativeLocation, cube)
   
   def GetChunkAt(position as Vector3):
-    x = position.x / (ChunkWidth * CubeWidth)
+    x = position.x / (ChunkWidth  * CubeWidth)
     y = position.y / (ChunkHeight * CubeWidth)
-    z = position.z / (ChunkDepth * CubeWidth)
+    z = position.z / (ChunkDepth  * CubeWidth)
     key = Vector3i(x, y, z)
+    Debug.Log(chunks.Keys.Count)
     return chunks[key]
     
   def GetCubeAt(position as Vector3):

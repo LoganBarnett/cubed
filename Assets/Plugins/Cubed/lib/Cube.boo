@@ -45,7 +45,7 @@ class Cube:
     gameObject.name = GetCubeName(indexes)
   
   def Calculate(gridPosition as Vector3i, ref vertexCount as int, cubes as (Cube, 3), cubeLegend as CubeLegend):
-    CubeGeneratorProgressEditor.ReportCube(Vector3i(chunk.x, chunk.y, 0f), gridPosition)
+    CubeGeneratorProgressEditor.ReportCube(Vector3i(chunk.x, chunk.y, 0f), gridPosition) if chunk
     # clear out the old data
     vertices.Clear()
     triangles.Clear()

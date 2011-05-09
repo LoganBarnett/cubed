@@ -9,6 +9,7 @@ class CubeGeneratorProgressEditor(EditorWindow):
   static currentObjectMessage = ""
   
   static def Start(cubedObjectDimensions as Vector3i, chunkDimensions as Vector3i):
+    return if EditorApplication.isPlayingOrWillChangePlaymode
     numberOfChunks = cubedObjectDimensions.x * cubedObjectDimensions.y # no z yet
     numberOfCubes = chunkDimensions.x * chunkDimensions.y * chunkDimensions.z * numberOfChunks
     totalObjectCount = numberOfChunks + numberOfCubes
@@ -16,15 +17,18 @@ class CubeGeneratorProgressEditor(EditorWindow):
     #window.Show()
     
   static def End():
+    return if EditorApplication.isPlayingOrWillChangePlaymode
     hide = true
     Display()
   
   static def ReportChunk(location as Vector3i):
+    return if EditorApplication.isPlayingOrWillChangePlaymode
     currentObjectCount += 1
     currentObjectMessage = "Chunk (${location.x}, ${location.y})"
     Display()
     
   static def ReportCube(chunkLocation as Vector3i, cubeLocation as Vector3i):
+    return if EditorApplication.isPlayingOrWillChangePlaymode
     currentObjectCount += 1
     currentObjectMessage = "Chunk (${chunkLocation.x}, ${chunkLocation.y}) Cube (${cubeLocation.x}, ${cubeLocation.y}, ${cubeLocation.z})"
     Display()
