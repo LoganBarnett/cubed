@@ -37,33 +37,31 @@ class Cube:
     offsetInChunk = (Vector3(indexes.x, indexes.y, indexes.z) * blockWidth)
     halfSize = Vector3(blockWidth, blockWidth, blockWidth) / 2f
     if chunk:
-      blockPosition = chunk.transform.position + offsetInChunk + halfSize
-      gameObject.transform.position = blockPosition
+      cubePosition = offsetInChunk + halfSize
+      gameObject.transform.position = cubePosition
       gameObject.transform.parent = chunk.transform
     
     gameObject.AddComponent of CubeBehaviour().cube = self
     gameObject.name = GetCubeName(indexes)
   
   def Calculate(gridPosition as Vector3i, ref vertexCount as int, cubes as (Cube, 3), cubeLegend as CubeLegend):
-    CubeGeneratorProgressEditor.ReportCube(Vector3i(chunk.x, chunk.y, 0f), gridPosition) if chunk
+    CubeGeneratorProgressEditor.ReportCube(Vector3i(chunk.x, chunk.y, chunk.z), gridPosition) if chunk
     # clear out the old data
     vertices.Clear()
     triangles.Clear()
     uvs.Clear()
-    
-    vx = gridPosition.x * blockWidth
-    vy = gridPosition.y * blockWidth
-    vz = gridPosition.z * blockWidth
-    
-    position = Vector3(vx, vy, vz)
-    
 
-    AddBottom(position, vertexCount, cubeLegend) unless AdjacentCubeExists(cubes, gridPosition.Down)
-    AddTop   (position, vertexCount, cubeLegend) unless AdjacentCubeExists(cubes, gridPosition.Up)
-    AddRight (position, vertexCount, cubeLegend) unless AdjacentCubeExists(cubes, gridPosition.Right)
-    AddLeft  (position, vertexCount, cubeLegend) unless AdjacentCubeExists(cubes, gridPosition.Left)
-    AddFront (position, vertexCount, cubeLegend) unless AdjacentCubeExists(cubes, gridPosition.Front)
-    AddBack  (position, vertexCount, cubeLegend) unless AdjacentCubeExists(cubes, gridPosition.Back)
+    chunkPosition = (chunk.transform.position if chunk else Vector3.zero)
+    
+    indexes = Vector3i() if not indexes
+    position = Vector3(indexes.x - chunkPosition.x, indexes.y - chunkPosition.y, indexes.z - chunkPosition.z) * blockWidth
+
+    AddBottom(position, vertexCount, cubeLegend) unless AdjacentCubeExists(cubes, indexes.Down)
+    AddTop   (position, vertexCount, cubeLegend) unless AdjacentCubeExists(cubes, indexes.Up)
+    AddRight (position, vertexCount, cubeLegend) unless AdjacentCubeExists(cubes, indexes.Right)
+    AddLeft  (position, vertexCount, cubeLegend) unless AdjacentCubeExists(cubes, indexes.Left)
+    AddFront (position, vertexCount, cubeLegend) unless AdjacentCubeExists(cubes, indexes.Front)
+    AddBack  (position, vertexCount, cubeLegend) unless AdjacentCubeExists(cubes, indexes.Back)
     
     if gameObject:
       generateCollider = true
@@ -144,7 +142,7 @@ class Cube:
 #    Uvs.Add(Vector2(0f, 0f))
 #    Uvs.Add(Vector2(0f, 1f))
 #    Uvs.Add(Vector2(1f, 0f))
-#    Uvs.Add(Vector2(1f, 1f))
+#    Uvs.Add(Vector2(1f, 1f)) 
 #    
   def AddTriangles(vertexCount as int):
     # need this order to appear on outside of cube
@@ -153,7 +151,10 @@ class Cube:
   
   def GetCube(cubes as (Cube, 3), position as Vector3i):
     try:
-      return cubes[position.x, position.y, position.z]
+      cube = cubes[position.x, position.y, position.z]
+      return null if not cube
+      return null if cube.chunk != chunk
+      return cube
     except e as System.IndexOutOfRangeException:
       return null
   

@@ -1,5 +1,5 @@
 import UnityEditor
-import UnityEngine
+#import UnityEngine
 
 class CubeGeneratorProgressEditor(EditorWindow):
   static window as CubeGeneratorProgressEditor
@@ -10,7 +10,7 @@ class CubeGeneratorProgressEditor(EditorWindow):
   
   static def Start(cubedObjectDimensions as Vector3i, chunkDimensions as Vector3i):
     return if EditorApplication.isPlayingOrWillChangePlaymode
-    numberOfChunks = cubedObjectDimensions.x * cubedObjectDimensions.y # no z yet
+    numberOfChunks = cubedObjectDimensions.x * cubedObjectDimensions.y * cubedObjectDimensions.z
     numberOfCubes = chunkDimensions.x * chunkDimensions.y * chunkDimensions.z * numberOfChunks
     totalObjectCount = numberOfChunks + numberOfCubes
     #window = GetWindow(CubeGeneratorProgressEditor)
@@ -24,13 +24,13 @@ class CubeGeneratorProgressEditor(EditorWindow):
   static def ReportChunk(location as Vector3i):
     return if EditorApplication.isPlayingOrWillChangePlaymode
     currentObjectCount += 1
-    currentObjectMessage = "Chunk (${location.x}, ${location.y})"
+    currentObjectMessage = "Chunk (${location.x}, ${location.y}, ${location.z})"
     Display()
     
   static def ReportCube(chunkLocation as Vector3i, cubeLocation as Vector3i):
-    return if EditorApplication.isPlayingOrWillChangePlaymode
+    return if EditorApplication.isPlayingOrWillChangePlaymode or chunkLocation == null or cubeLocation == null
     currentObjectCount += 1
-    currentObjectMessage = "Chunk (${chunkLocation.x}, ${chunkLocation.y}) Cube (${cubeLocation.x}, ${cubeLocation.y}, ${cubeLocation.z})"
+    currentObjectMessage = "Chunk (${chunkLocation.x}, ${chunkLocation.y}, ${chunkLocation.z}) Cube (${cubeLocation.x}, ${cubeLocation.y}, ${cubeLocation.z})"
     Display()
     
   static def Display():

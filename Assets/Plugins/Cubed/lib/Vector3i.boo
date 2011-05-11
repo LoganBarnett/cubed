@@ -2,9 +2,12 @@ namespace Cubed
 import UnityEngine;
 
 class Vector3i:
-  public x as int
-  public y as int
-  public z as int
+  public x = 0
+  public y = 0
+  public z = 0
+
+  def constructor():
+    pass
 
   def constructor(newX as int, newY as int, newZ as int):
     x = newX
@@ -15,7 +18,13 @@ class Vector3i:
     x = cast(int, vector.x)
     y = cast(int, vector.y)
     z = cast(int, vector.z)
-  
+    
+  static def op_Multiply(left as Vector3i, right as Vector3i):
+    return Vector3i(left.x * right.x, left.y * right.y, left.z * right.z)
+    
+  static def op_Addition(left as Vector3i, right as Vector3i):
+    return Vector3i(left.x + right.x, left.y + right.y, left.z + right.z)
+    
   static def op_Addition(vector as Vector3i, i as int):
     return Vector3i(vector.x + i, vector.y + i, vector.z + i)
     
@@ -23,6 +32,9 @@ class Vector3i:
     return Vector3i(vector.x - i, vector.y - i, vector.z - i)
   
   static def op_Equality(vectorLeft as Vector3i, vectorRight as Vector3i):
+    return true if not vectorLeft and not vectorRight
+    return false if vectorLeft and not vectorRight
+    return false if not vectorLeft and vectorRight
     return vectorLeft.x == vectorRight.x and vectorLeft.y == vectorRight.y and vectorLeft.z == vectorRight.z
     
   def ToString():

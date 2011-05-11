@@ -1,39 +1,28 @@
 namespace Cubed
 
 import UnityEngine
-#import System.Linq.Enumerable
+import System.Linq.Enumerable
 import System.Collections.Generic
 
 [System.Serializable]
 class CubeTerrain:
-  [Property(GameObject)]
   public gameObject as GameObject
-  
-  [Property(CubeWidth)]
-  public blockWidth as int #= 10f
-  
-  # TODO: Switch to this
-  #[Property(ChunkDimensions)]
-  #chunkDimensions as Vector3i
-  [Property(ChunkWidth)]
-  public chunkWidth as int #= 10
-  [Property(ChunkHeight)]
-  public chunkHeight as int #= 10
-  [Property(ChunkDepth)]
-  public chunkDepth  as int #= 10
-  
-  [Property(CubeLegend)]
+  public cubeSize as int #= 10f
+  public chunkDimensions as Vector3i
+  public dimensionsInChunks as Vector3i
   public cubeLegend as CubeLegend
+  public cubeMaterial as Material
   
-  [Property(CubeMaterial)]
-  public blockMaterial as Material
   
   # oh Unity, if only you could serialize Dictionaries, I would love you longer than the stars
   # etc
   public chunkVectors as List of Vector3i
   public chunkChunks as List of Chunk
+  public cubeVectors as List of Vector3i
+  public cubeCubes as List of Cube
   
   chunks as Dictionary[of Vector3i, Chunk]
+  allCubes as (Cube, 3)
   
 #  [Property(CurrentProgress)]
 #  currentProgress = 0
@@ -42,41 +31,48 @@ class CubeTerrain:
 #  totalProgress = 0
     
   def Initialize():
+    cubeDimensions = dimensionsInChunks * chunkDimensions
+    allCubes = matrix(Cube, cubeDimensions.x, cubeDimensions.y, cubeDimensions.z)
+    if cubeVectors and cubeCubes:
+      for i in range(0, cubeVectors.Count):
+        indexes = cubeVectors[i]
+        allCubes[indexes.x, indexes.y, indexes.z] = cubeCubes[i]
+        
     chunks = Dictionary[of Vector3i, Chunk]()
     if chunkVectors and chunkChunks:
       for i in range(0, chunkVectors.Count):
-        chunks[chunkVectors[i]] = chunkChunks[i]
-  
-  def GenerateFilledCubeGrid():
-    grid = matrix(Cube, ChunkWidth, ChunkHeight, ChunkDepth)
-    for x in range(ChunkWidth):
-      for y in range(ChunkHeight):
-        for z in range(ChunkDepth):
-          grid[x, y, z] = Cube()
-    return grid
+        chunk = chunkChunks[i]
+        chunk.cubes = allCubes
+        chunks[chunkVectors[i]] = chunk
     
-  def GenerateHalfFilledCubeGrid():
-    grid = matrix(Cube, ChunkWidth, ChunkHeight, ChunkDepth)
-    for x in range(ChunkWidth):
-      for y in range(ChunkHeight / 2):
-        for z in range(ChunkDepth):
-          cube = Cube()
-          cube.Type = x % 2
-          grid[x, y, z] = cube
-    return grid
-    
-  def GenerateChunks(chunksWide as int, chunksDeep as int, cubes as (Cube, 3)):
-    cubedObjectDimensions = Vector3i(chunksWide, chunksDeep, 0)
-    chunkDimensions = Vector3i(chunkWidth, chunkHeight, chunkDepth)
-    CubeGeneratorProgressEditor.Start(cubedObjectDimensions, chunkDimensions)
+  def GenerateChunks(newDimensionsInChunks as Vector3i, cubes as (Cube, 3)):
+    allCubes = cubes
+    dimensionsInChunks = newDimensionsInChunks
+    #cubedObjectDimensions = Vector3i(chunksWide, chunksDeep, 0)
+    CubeGeneratorProgressEditor.Start(dimensionsInChunks, chunkDimensions)
     
     chunks = Dictionary[of Vector3i, Chunk]()
-    for x in range(chunksWide):
-      for y in range(chunksDeep):
-        GenerateChunk(x, y, null)
+    #i = 0
+    for x in range(dimensionsInChunks.x):
+      for y in range(dimensionsInChunks.y):
+        for z in range(dimensionsInChunks.z):
+          #chunkCubes = matrix(Cube, chunkDimensions.x, chunkDimensions.y, chunkDimensions.z)
+          #factor = chunkDimensions.x * chunkDimensions.y * chunkDimensions.z
+          #fromIndex = i * factor
+          #System.Array.Copy(cubes, fromIndex, chunkCubes, 0, len(chunkCubes))
+          location = Vector3i(x, y, z)
+          GenerateChunk(location, cubes)
+          #i += 1
     
     chunkVectors = chunks.Keys.ToList()
     chunkChunks = chunks.Values.ToList()
+    
+    cubeVectors = List of Vector3i()
+    cubeCubes = List of Cube()
+    for cube in cubes:
+      continue if not cube
+      cubeCubes.Add(cube)
+      cubeVectors.Add(cube.indexes)
     
     CubeGeneratorProgressEditor.End()
   
@@ -85,8 +81,8 @@ class CubeTerrain:
     chunkGameObject.AddComponent(MeshFilter)
     chunkGameObject.AddComponent(MeshRenderer)
     chunkComponent = chunkGameObject.AddComponent(Chunk)
-    chunkComponent.CubeWidth = blockWidth
-    chunkComponent.CubeMaterial = blockMaterial
+    chunkComponent.CubeWidth = cubeSize
+    chunkComponent.CubeMaterial = cubeMaterial
     chunkGameObject.name = "Chunk"
     chunkGameObject.tag = "cubed_chunk"
     chunkComponent.CubeLegend = cubeLegend
@@ -94,50 +90,42 @@ class CubeTerrain:
     return chunkGameObject
     
   def GetCubePointAt(worldPosition as Vector3):
-    blockPosition = worldPosition / blockWidth
-    blockIndexes = Vector3i(blockPosition.x, blockPosition.y, blockPosition.z)
-    return blockIndexes
+    cubePosition = worldPosition / cubeSize
+    cubeIndexes = Vector3i(cubePosition.x, cubePosition.y, cubePosition.z)
+    return cubeIndexes
         
-  def GenerateChunk(x as int, y as int, cubes as (Cube, 3)):
-    CubeGeneratorProgressEditor.ReportChunk(Vector3i(x, y, 0f))
-    cubes = GenerateHalfFilledCubeGrid() if cubes == null
+  def GenerateChunk(location as Vector3i, cubes as (Cube, 3)):
+    CubeGeneratorProgressEditor.ReportChunk(Vector3i(location.x, location.y, location.z))
     
     chunkGameObject = MakeChunk()
-    chunkGameObject.transform.position = Vector3(x * chunkWidth * blockWidth, 0f, y * chunkDepth * blockWidth)
-    chunkGameObject.name = "Chunk ${x}, ${y}"
+    chunkGameObject.transform.position = Vector3(location.x * chunkDimensions.x * cubeSize, location.y * chunkDimensions.y * cubeSize, location.z * chunkDimensions.z * cubeSize)
+    chunkGameObject.name = "Chunk ${location.x}, ${location.y}, ${location.z}"
     chunk = chunkGameObject.GetComponent of Chunk()
     
-    chunk.dimensionsInCubes = Vector3i(chunkWidth, chunkHeight, chunkDepth)
-    chunk.x = x
-    chunk.y = y
-    chunks[Vector3i(x, 0, y)] = chunk
+    chunk.cubeObject = self
+    chunk.dimensionsInCubes = Vector3i(chunkDimensions.x, chunkDimensions.y, chunkDimensions.z)
+    chunk.x = location.x
+    chunk.y = location.y
+    chunk.z = location.z
+    chunks[Vector3i(location.x, location.y, location.z)] = chunk
     chunk.Generate(cubes)
 
   
   def PlaceCube(indexes as Vector3i, cube as GameObject):
-    x = indexes.x / chunkWidth
-    y = indexes.z / chunkDepth
-    chunk = chunks[Vector3i(x, 0, y)]
-    relativeLocation = Vector3i(indexes.x - (chunkWidth * x), indexes.y, indexes.z - (chunkDepth * y))
-    chunk.AddCube(relativeLocation, cube)
+    x = indexes.x / chunkDimensions.x
+    y = indexes.y / chunkDimensions.y
+    z = indexes.z / chunkDimensions.z
+    chunk = chunks[Vector3i(x, y, z)]
+    chunk.AddCube(indexes, cube)
   
   def GetChunkAt(position as Vector3):
-    x = position.x / (ChunkWidth  * CubeWidth)
-    y = position.y / (ChunkHeight * CubeWidth)
-    z = position.z / (ChunkDepth  * CubeWidth)
+    x = position.x / (chunkDimensions.x  * cubeSize)
+    y = position.y / (chunkDimensions.y * cubeSize)
+    z = position.z / (chunkDimensions.z  * cubeSize)
     key = Vector3i(x, y, z)
-    Debug.Log(chunks.Keys.Count)
     return chunks[key]
     
   def GetCubeAt(position as Vector3):
-#    chunkCollider = hit.collider as Collider # somehow Boo can't find the type, so specify it
-#    blockBehaviour = chunkCollider.GetComponent of CubeBehaviour()
-    
-    #return null if blockBehaviour == null
-    #chunk = blockBehaviour.cube.Chunk
-    #return null if not chunk
-    
     chunk = GetChunkAt(position)
     cube = chunk.GetCubeAt(GetCubePointAt(position))
-    #Debug.Log("Found cube " + cube.GameObject.name)
     return cube
