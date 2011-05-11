@@ -82,10 +82,25 @@ class CubeTerrainBehaviour(MonoBehaviour):
     grid = matrix(Cube, totalX, totalY, totalZ)
     for x in range(totalX):
       for y in range(totalY):
-        continue if y > (totalY - 1) / 2
+        continue if y > (totalY - 1) / 2 
         for z in range(totalZ):
           cube = Cube()
           cube.Type = x % 2
           cube.indexes = Vector3i(x,y,z)
           grid[x, y, z] = cube
     return grid
+    
+  def GenerateVertexStressTestGrid():
+      totalX = chunkDimensions.x * dimensionsInChunks.x
+      totalY = chunkDimensions.y * dimensionsInChunks.y
+      totalZ = chunkDimensions.z * dimensionsInChunks.z
+      grid = matrix(Cube, totalX, totalY, totalZ) 
+      for x in range(totalX):
+        for y in range(totalY):
+          for z in range(totalZ):
+            continue if (x % 2 == 1 and z % 2 == 1 and y % 2 == 0) or (x % 2 == 0 and z % 2 == 1 and y % 2 == 1) or (x % 2 == 1 and z % 2 == 0 and y % 2 == 1) #or (x % 2 == 1 and z % 2 == 1 and y % 2 == 0)
+            cube = Cube()
+            cube.Type = x % 2
+            cube.indexes = Vector3i(x,y,z)
+            grid[x, y, z] = cube
+      return grid
