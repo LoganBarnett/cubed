@@ -6,6 +6,7 @@ import System.Linq.Enumerable
 class CubeDefinition:
   public type = 0
   public name = "cube"
+  public hasCollision = false
   public front as Material
   public back as Material
   public left as Material

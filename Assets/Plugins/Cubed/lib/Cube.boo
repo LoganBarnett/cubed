@@ -45,7 +45,7 @@ class Cube:
     gameObject.name = GetCubeName(indexes)
   
   def Calculate(gridPosition as Vector3i, ref vertexCount as int, cubes as (Cube, 3), cubeLegend as CubeLegend):
-    CubeGeneratorProgressEditor.ReportCube(Vector3i(chunk.x, chunk.y, chunk.z), gridPosition) if chunk
+    CubeGeneratorProgressEditor.ReportCube(chunk.gridPosition, gridPosition) if chunk
     # clear out the old data
     vertices.Clear()
     triangles.Clear()
@@ -66,8 +66,8 @@ class Cube:
     if gameObject:
       generateCollider = true
       GameObject.Destroy(gameObject)
-      
-    CreateCollision() if generateCollider
+    
+    CreateCollision() if generateCollider and cubeLegend.cubeDefinitions[type].hasCollision
   
   def GetCubeName(gridPosition as Vector3i):
     return "Cube Collider (${gridPosition.x}, ${gridPosition.y}, ${gridPosition.z})"
@@ -153,7 +153,7 @@ class Cube:
     try:
       cube = cubes[position.x, position.y, position.z]
       return null if not cube
-      return null if cube.chunk != chunk
+      return null if cube.chunk and (cube.chunk.gridPosition != chunk.gridPosition)
       return cube
     except e as System.IndexOutOfRangeException:
       return null

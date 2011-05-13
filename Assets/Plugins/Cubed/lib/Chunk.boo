@@ -6,11 +6,9 @@ import System.Collections.Generic
 class Chunk(MonoBehaviour):
   public serializedCubes as List of Cube
   public cubes as (Cube, 3)
-  public x = 0
-  public y = 0
-  public z = 0
+  public gridPosition as Vector3i
   public dimensionsInCubes as Vector3i
-  public cubeObject as CubeTerrain
+  public cubeObject as CubedObject
   
   [Property(CubeWidth)]
   public blockWidth = 10f
@@ -49,7 +47,7 @@ class Chunk(MonoBehaviour):
     
   def GenerateRenderableCubes(cubes as (Cube, 3)):
     vertexCount = 0
-    begin = Vector3i(x * dimensionsInCubes.x, y * dimensionsInCubes.y, z * dimensionsInCubes.z)
+    begin = gridPosition * dimensionsInCubes
     end = begin + dimensionsInCubes
     for cubeX in range(begin.x, end.x):
       for cubeY in range(begin.y, end.y):
@@ -60,7 +58,7 @@ class Chunk(MonoBehaviour):
     return cubes
   
   def Generate(cubesToGenerate as (Cube, 3)):
-    begin = Vector3i(x * dimensionsInCubes.x, y * dimensionsInCubes.y, z * dimensionsInCubes.z)
+    begin = gridPosition * dimensionsInCubes
     end = begin + dimensionsInCubes
     if cubes != null:
       for x in range(begin.x, end.x):

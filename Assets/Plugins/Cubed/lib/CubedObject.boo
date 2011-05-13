@@ -104,10 +104,8 @@ class CubedObject:
     
     chunk.cubeObject = self
     chunk.dimensionsInCubes = Vector3i(chunkDimensions.x, chunkDimensions.y, chunkDimensions.z)
-    chunk.x = location.x
-    chunk.y = location.y
-    chunk.z = location.z
-    chunks[Vector3i(location.x, location.y, location.z)] = chunk
+    chunk.gridPosition = location
+    chunks[location] = chunk
     chunk.Generate(cubes)
 
   

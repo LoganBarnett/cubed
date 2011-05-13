@@ -3,7 +3,7 @@ import Cubed
 import System.Linq.Enumerable
 
 class Digger(MonoBehaviour):
-  cubeTerrain as CubeTerrainBehaviour
+  cubeTerrain as CubedObjectBehaviour
   public ignoreLayerNames as (string)
   
   layerMask as int
@@ -12,7 +12,7 @@ class Digger(MonoBehaviour):
   def Awake():
     cubeTerrainGameObject = GameObject.Find("Cube Terrain")
     raise System.Exception("There must be a game object named 'Cube Terrain' on the scene for Digger to work") if cubeTerrainGameObject == null
-    cubeTerrain = cubeTerrainGameObject.GetComponent of CubeTerrainBehaviour()
+    cubeTerrain = cubeTerrainGameObject.GetComponent of CubedObjectBehaviour()
     layerNumbers = ignoreLayerNames.Select({name| 1 << LayerMask.NameToLayer(name) })
     
     for n in layerNumbers:
