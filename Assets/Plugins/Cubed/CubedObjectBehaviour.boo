@@ -8,6 +8,7 @@ import Cubed
 #[RequireComponent(MeshFilter)]
 #[RequireComponent(MeshRenderer)]
 #[RequireComponent(MeshCollider)]
+[ExecuteInEditMode]
 class CubedObjectBehaviour(MonoBehaviour): 
   public chunkDimensions = Vector3i(8,8,8)
   public dimensionsInChunks = Vector3i(1,1,1)
@@ -21,7 +22,7 @@ class CubedObjectBehaviour(MonoBehaviour):
   public packedTexture as Texture
   public textureAtlas as (Rect)
   public cubeLegend as CubeLegend
-  public cubeTerrain as CubedObject;
+  public cubeTerrain as CubedObject
   
   def Awake():
     cubeTerrain.Initialize()
