@@ -51,7 +51,7 @@ worldPoint = hit.point + (ray.direction * 0.1f) # need to overpenetrate a little
 block = cubedObject.RemoveCubeAt(worldPoint)
 cubedObject.GetChunkAt(worldPoint).Generate(cubedObject.cubeTerrain.Cubes)
 BroadcastMessage("DigComplete", block, SendMessageOptions.DontRequireReceiver) unless block == null
-```boo
+```
 
 ## C#
 
