@@ -50,6 +50,9 @@ class CubedObjectBehaviour(MonoBehaviour):
       children.Add(childTransform.gameObject)
     for child in children:
       GameObject.DestroyImmediate(child)
+  
+  def GetChunkAt(position as Vector3):
+    return cubeTerrain.GetChunkAt(position)
 
   def GetCubeAt(position as Vector3):
     return cubeTerrain.GetCubeAt(position)

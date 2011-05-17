@@ -125,6 +125,4 @@ class Chunk(MonoBehaviour):
     #newCubes = cubes.Clone() as (Cube, 3)
     newCubes = cubes
     newCubes[cubeLocation.x, cubeLocation.y, cubeLocation.z] = null
-    # TODO: Make a separate call
-    Generate(newCubes)
     return cube

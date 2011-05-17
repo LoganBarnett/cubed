@@ -24,6 +24,10 @@ class CubedObject:
   chunks as Dictionary[of Vector3i, Chunk]
   allCubes as (Cube, 3)
   
+  Cubes as (Cube, 3):
+    get:
+      return allCubes
+  
 #  [Property(CurrentProgress)]
 #  currentProgress = 0
   

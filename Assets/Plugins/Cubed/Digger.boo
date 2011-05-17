@@ -27,4 +27,5 @@ class Digger(MonoBehaviour):
     
     worldPoint = hit.point + (ray.direction * 0.1f) # need to overpenetrate a little
     block = cubeTerrain.RemoveCubeAt(worldPoint)
+    cubeTerrain.GetChunkAt(worldPoint).Generate(cubeTerrain.cubeTerrain.Cubes)
     BroadcastMessage("DigComplete", block, SendMessageOptions.DontRequireReceiver) unless block == null
