@@ -11,11 +11,12 @@ Installation:
 -------------
 
 1. Get the library from here or the Asset Store (coming soon!) 
-2. Create a game object * Add the CubedObject behaviour to the game object 
-3. Create Cube Definitions in the inspector and assign materials to sides (this is your palette)
-4. Click Pack Textures in the inspector for the CubedObject
-5. Give the CubedObject some data (or use the editor coming soon) 
-6. Click Bake Cubes in the inspector for the CubedObject
+2. Create a game object
+3. Add the CubedObject behaviour to the game object 
+4. Create Cube Definitions in the inspector and assign materials to sides (this is your palette)
+5. Click Pack Textures in the inspector for the CubedObject
+6. Give the CubedObject some data (or use the editor coming soon) 
+7. Click Bake Cubes in the inspector for the CubedObject
 
 Coming soon!
 ------------
