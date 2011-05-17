@@ -21,18 +21,19 @@ Installation:
 Adding Cubes
 ------------
 ## Boo
-> placeDistance = 5f
-> mask = 0 # can be omitted if not coming out of a capsule collider
-> hit = RaycastHit()
-> return false unless Physics.Raycast(aimingRay, hit, placeDistance, ~mask)
->
-> worldPoint = hit.point - (aimingRay.direction * 0.001f) # need to underpenetrate a little
->
-> if hit.collider.CompareTag("cubed_cube"):
->   cubedObject.PlaceCubeAt(worldPoint, cube)      
->   return true
-> return false
+```boo
+placeDistance = 5f
+mask = 0 # can be omitted if not coming out of a capsule collider
+hit = RaycastHit()
+return false unless Physics.Raycast(aimingRay, hit, placeDistance, ~mask)
 
+worldPoint = hit.point - (aimingRay.direction * 0.001f) # need to underpenetrate a little
+
+if hit.collider.CompareTag("cubed_cube"):
+  cubedObject.PlaceCubeAt(worldPoint, cube)      
+  return true
+return false
+```
 ## C#
 
 ## UnityScript
@@ -40,15 +41,17 @@ Adding Cubes
 Removing Cubes
 --------------
 ## Boo
-> distance = 5f
-> mask = 0 # can be omitted if not coming out of a capsule collider
-> hit = RaycastHit()
-> return null unless Physics.Raycast(ray, hit, distance, ~mask)
+```boo
+distance = 5f
+mask = 0 # can be omitted if not coming out of a capsule collider
+hit = RaycastHit()
+return null unless Physics.Raycast(ray, hit, distance, ~mask)
 
-> worldPoint = hit.point + (ray.direction * 0.1f) # need to overpenetrate a little
-> block = cubedObject.RemoveCubeAt(worldPoint)
-> cubedObject.GetChunkAt(worldPoint).Generate(cubedObject.cubeTerrain.Cubes)
-> BroadcastMessage("DigComplete", block, SendMessageOptions.DontRequireReceiver) unless block == null
+worldPoint = hit.point + (ray.direction * 0.1f) # need to overpenetrate a little
+block = cubedObject.RemoveCubeAt(worldPoint)
+cubedObject.GetChunkAt(worldPoint).Generate(cubedObject.cubeTerrain.Cubes)
+BroadcastMessage("DigComplete", block, SendMessageOptions.DontRequireReceiver) unless block == null
+```boo
 
 ## C#
 
