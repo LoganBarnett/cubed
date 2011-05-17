@@ -18,9 +18,44 @@ Installation:
 6. Give the CubedObject some data (or use the editor coming soon) 
 7. Click Bake Cubes in the inspector for the CubedObject
 
+Adding Cubes
+------------
+## Boo
+> placeDistance = 5f
+> mask = 0 # can be omitted if not coming out of a capsule collider
+> hit = RaycastHit()
+> return false unless Physics.Raycast(aimingRay, hit, placeDistance, ~mask)
+>
+> worldPoint = hit.point - (aimingRay.direction * 0.001f) # need to underpenetrate a little
+>
+> if hit.collider.CompareTag("cubed_cube"):
+>   cubedObject.PlaceCubeAt(worldPoint, cube)      
+>   return true
+> return false
+
+## C#
+
+## UnityScript
+
+Removing Cubes
+--------------
+## Boo
+> distance = 5f
+> mask = 0 # can be omitted if not coming out of a capsule collider
+> hit = RaycastHit()
+> return null unless Physics.Raycast(ray, hit, distance, ~mask)
+
+> worldPoint = hit.point + (ray.direction * 0.1f) # need to overpenetrate a little
+> block = cubedObject.RemoveCubeAt(worldPoint)
+> cubedObject.GetChunkAt(worldPoint).Generate(cubedObject.cubeTerrain.Cubes)
+> BroadcastMessage("DigComplete", block, SendMessageOptions.DontRequireReceiver) unless block == null
+
+## C#
+
+## UnityScript
+
 Coming soon!
 ------------
 * Collisions
-* Adding and Removing Cubes
 * Editor in Unity
 
