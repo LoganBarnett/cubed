@@ -18,6 +18,7 @@ Installation:
 6. Click Bake Cubes in the inspector for the CubedObject
 
 Coming soon!
+------------
 * Collisions
 * Adding and Removing Cubes
 * Editor in Unity
