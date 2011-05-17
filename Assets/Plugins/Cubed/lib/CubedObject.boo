@@ -52,21 +52,17 @@ class CubedObject:
   def GenerateChunks(newDimensionsInChunks as Vector3i, cubes as (Cube, 3)):
     allCubes = cubes
     dimensionsInChunks = newDimensionsInChunks
-    #cubedObjectDimensions = Vector3i(chunksWide, chunksDeep, 0)
-    CubeGeneratorProgressEditor.Start(dimensionsInChunks, chunkDimensions)
+    # TODO: Put this back in when preprocessor directives are supported in Boo
+    # Use UNITY_EDITOR
+    #CubeGeneratorProgressEditor.Start(dimensionsInChunks, chunkDimensions)
     
     chunks = Dictionary[of Vector3i, Chunk]()
     #i = 0
     for x in range(dimensionsInChunks.x):
       for y in range(dimensionsInChunks.y):
         for z in range(dimensionsInChunks.z):
-          #chunkCubes = matrix(Cube, chunkDimensions.x, chunkDimensions.y, chunkDimensions.z)
-          #factor = chunkDimensions.x * chunkDimensions.y * chunkDimensions.z
-          #fromIndex = i * factor
-          #System.Array.Copy(cubes, fromIndex, chunkCubes, 0, len(chunkCubes))
           location = Vector3i(x, y, z)
           GenerateChunk(location, cubes)
-          #i += 1
     
     chunkVectors = chunks.Keys.ToList()
     chunkChunks = chunks.Values.ToList()
@@ -77,8 +73,9 @@ class CubedObject:
       continue if not cube
       cubeCubes.Add(cube)
       cubeVectors.Add(cube.indexes)
-    
-    CubeGeneratorProgressEditor.End()
+    # TODO: Put this back in when preprocessor directives are supported in Boo
+    # Use UNITY_EDITOR
+    #CubeGeneratorProgressEditor.End()
   
   def MakeChunk():
     chunkGameObject = GameObject()
@@ -99,7 +96,9 @@ class CubedObject:
     return cubeIndexes
         
   def GenerateChunk(location as Vector3i, cubes as (Cube, 3)):
-    CubeGeneratorProgressEditor.ReportChunk(Vector3i(location.x, location.y, location.z))
+    # TODO: Put this back in when preprocessor directives are supported in Boo
+    # Use UNITY_EDITOR
+    #CubeGeneratorProgressEditor.ReportChunk(Vector3i(location.x, location.y, location.z))
     
     chunkGameObject = MakeChunk()
     chunkGameObject.transform.position = Vector3(location.x * chunkDimensions.x * cubeSize, location.y * chunkDimensions.y * cubeSize, location.z * chunkDimensions.z * cubeSize)

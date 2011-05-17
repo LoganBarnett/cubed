@@ -22,7 +22,9 @@ class CubeGeneratorEditor(Editor):
     try:
       cubedObject.SendMessage("GenerateCubes", cubedObject)
     except e:
-      CubeGeneratorProgressEditor.End()
+      # TODO: Put this back in when preprocessor directives are supported in Boo
+      # Use UNITY_EDITOR
+      #CubeGeneratorProgressEditor.End()
       Debug.LogError(e)
       
   static def PackTextures(cubedObject as CubedObjectBehaviour):
