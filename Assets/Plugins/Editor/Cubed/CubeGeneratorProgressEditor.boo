@@ -1,4 +1,4 @@
-import UnityEditor
+#import UnityEditor
 
 #class CubeGeneratorProgressEditor(EditorWindow):
 #  static window as CubeGeneratorProgressEditor

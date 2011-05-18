@@ -25,7 +25,7 @@ class CubedObjectBehaviour(MonoBehaviour):
   public cubeTerrain as CubedObject
   
   def Awake():
-    cubeTerrain.Initialize()
+    cubeTerrain.Initialize() if cubeTerrain
     #Generate() if cubeTerrain == null
     
   def Generate(allCubes as (Cube, 3)):

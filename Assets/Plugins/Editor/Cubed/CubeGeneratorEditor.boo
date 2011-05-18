@@ -35,10 +35,11 @@ class CubeGeneratorEditor(Editor):
     packedTexture = Texture2D(1024, 1024)
     cubedObject.packedTexture = packedTexture
     cubedObject.textureAtlas = packedTexture.PackTextures(textures.ToArray(), 1)
-    material = Material(Shader.Find("Diffuse"))
+    material = Material(cubedObject.material)
     material.mainTexture = packedTexture
     material.color = Color.white
     cubedObject.material = material
+    Debug.Log("Packing ${textures.Count} Textures complete.")
         
   def OnInspectorGUI():
     if (GUILayout.Button("Bake Cubes")):
