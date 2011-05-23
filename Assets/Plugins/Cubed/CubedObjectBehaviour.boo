@@ -22,27 +22,27 @@ class CubedObjectBehaviour(MonoBehaviour):
   public packedTexture as Texture
   public textureAtlas as (Rect)
   public cubeLegend as CubeLegend
-  public cubeTerrain as CubedObject
+  public cubedObject as CubedObject
   
   def Awake():
-    cubeTerrain.Initialize() if cubeTerrain
-    #Generate() if cubeTerrain == null
+    cubedObject.Initialize() if cubedObject
+    #Generate() if cubedObject == null
     
   def Generate(allCubes as (Cube, 3)):
     DestroyChildren() # patricide?
     # TODO: This is getting painful
     # Make chunk height/depth/width into WorldDimensions property
     cubeLegend = CubeLegend(TextureAtlas: textureAtlas, CubeDefinitions: cubeDefinitions)
-    cubeTerrain = CubedObject()
-    cubeTerrain.cubeSize = cubeSize
-    cubeTerrain.chunkDimensions = chunkDimensions
-    cubeTerrain.dimensionsInChunks = dimensionsInChunks
-    cubeTerrain.cubeMaterial = material
-    cubeTerrain.cubeLegend = cubeLegend
-    cubeTerrain.gameObject = gameObject
+    cubedObject = CubedObject()
+    cubedObject.cubeSize = cubeSize
+    cubedObject.chunkDimensions = chunkDimensions
+    cubedObject.dimensionsInChunks = dimensionsInChunks
+    cubedObject.cubeMaterial = material
+    cubedObject.cubeLegend = cubeLegend
+    cubedObject.gameObject = gameObject
     # just create a full chunk for testing
     #Debug.Log(allCubes == null)
-    cubeTerrain.GenerateChunks(dimensionsInChunks, allCubes)
+    cubedObject.GenerateChunks(dimensionsInChunks, allCubes)
   
   def DestroyChildren():
     children = List of GameObject()
@@ -52,16 +52,16 @@ class CubedObjectBehaviour(MonoBehaviour):
       GameObject.DestroyImmediate(child)
   
   def GetChunkAt(position as Vector3):
-    return cubeTerrain.GetChunkAt(position)
+    return cubedObject.GetChunkAt(position)
 
   def GetCubeAt(position as Vector3):
-    return cubeTerrain.GetCubeAt(position)
+    return cubedObject.GetCubeAt(position)
   
   def RemoveCubeAt(position as Vector3):
-    cube = cubeTerrain.GetCubeAt(position)
+    cube = cubedObject.GetCubeAt(position)
     return null if cube == null
     return cube.Chunk.RemoveCube(cube.Indexes)
   
   def PlaceCubeAt(worldPosition as Vector3, cube as GameObject):
-    cubePlacement = cubeTerrain.GetCubePointAt(worldPosition)
-    cubeTerrain.PlaceCube(cubePlacement, cube)
+    cubePlacement = cubedObject.GetCubePointAt(worldPosition)
+    cubedObject.PlaceCube(cubePlacement, cube)

@@ -1,22 +1,18 @@
 namespace Cubed
 import UnityEngine
-import System.Linq.Enumerable
 
 [System.Serializable]
 class CubeDefinition:
   public type = 0
   public name = "cube"
   public hasCollision = false
-  public front as Material
-  public back as Material
-  public left as Material
-  public right as Material
-  public top as Material
-  public bottom as Material
+  public front as Texture2D
+  public back as Texture2D
+  public left as Texture2D
+  public right as Texture2D
+  public top as Texture2D
+  public bottom as Texture2D
   
-  def Materials() as (Material):
-    return (front, back, left, right, top, bottom)
-    
   Textures as (Texture2D):
     get:
-      return Materials().Select({m| m.mainTexture as Texture2D}).ToArray()
+      return (front, back, left, right, top, bottom)

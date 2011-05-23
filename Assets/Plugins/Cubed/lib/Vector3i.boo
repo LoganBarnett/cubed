@@ -33,8 +33,7 @@ class Vector3i:
   
   static def op_Equality(vectorLeft as Vector3i, vectorRight as Vector3i):
     return true if not vectorLeft and not vectorRight
-    return false if vectorLeft and not vectorRight
-    return false if not vectorLeft and vectorRight
+    return false if not vectorLeft or not vectorRight
     return vectorLeft.x == vectorRight.x and vectorLeft.y == vectorRight.y and vectorLeft.z == vectorRight.z
     
   def ToString():
@@ -42,7 +41,7 @@ class Vector3i:
   
   # not sure how robust this is, should work for a large set of small numbers
   override def GetHashCode():
-    return (x * 256) + (y * 16) + z
+    return ToString().GetHashCode()
   
   override def Equals(obj as object):
     return obj as Vector3i == self
