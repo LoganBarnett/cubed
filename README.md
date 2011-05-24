@@ -20,7 +20,7 @@ Installation:
 
 Adding Cubes
 ------------
-## Boo
+### Boo
 ```boo
 placeDistance = 5f
 mask = 0 # can be omitted if not coming out of a capsule collider
@@ -34,13 +34,13 @@ if hit.collider.CompareTag("cubed_cube"):
   return true
 return false
 ```
-## C\#
+### C\#
 
-## UnityScript
+### UnityScript
 
 Removing Cubes
 --------------
-## Boo
+### Boo
 ```boo
 distance = 5f
 mask = 0 # can be omitted if not coming out of a capsule collider
@@ -53,9 +53,9 @@ cubedObject.GetChunkAt(worldPoint).Generate(cubedObject.cubeTerrain.Cubes)
 BroadcastMessage("DigComplete", block, SendMessageOptions.DontRequireReceiver) unless block == null
 ```
 
-## C\#
+### C\#
 
-## UnityScript
+### UnityScript
 
 Coming soon!
 ------------
