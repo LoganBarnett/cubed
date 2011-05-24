@@ -34,7 +34,7 @@ if hit.collider.CompareTag("cubed_cube"):
   return true
 return false
 ```
-### C#
+### C\#:
 
 ### UnityScript
 
@@ -53,7 +53,7 @@ cubedObject.GetChunkAt(worldPoint).Generate(cubedObject.cubeTerrain.Cubes)
 BroadcastMessage("DigComplete", block, SendMessageOptions.DontRequireReceiver) unless block == null
 ```
 
-### C\#:
+### C\# ###
 
 ### UnityScript
 
