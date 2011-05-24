@@ -34,7 +34,7 @@ if hit.collider.CompareTag("cubed_cube"):
   return true
 return false
 ```
-### C\#:
+### C\# ###
 
 ### UnityScript
 
