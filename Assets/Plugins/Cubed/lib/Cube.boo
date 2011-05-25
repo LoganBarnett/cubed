@@ -155,6 +155,7 @@ class Cube:
     try:
       cube = cubes[position.x, position.y, position.z]
       return null if not cube
+      return null if not cube.chunk
       return null if cube.chunk and (cube.chunk.gridPosition != chunk.gridPosition)
       return cube
     except e as System.IndexOutOfRangeException:
