@@ -51,13 +51,14 @@ class CubedObject:
     
   def GenerateChunks(newDimensionsInChunks as Vector3i, cubes as (Cube, 3)):
     allCubes = cubes
+      
     dimensionsInChunks = newDimensionsInChunks
     # TODO: Put this back in when preprocessor directives are supported in Boo
     # Use UNITY_EDITOR
     #CubeGeneratorProgressEditor.Start(dimensionsInChunks, chunkDimensions)
     
     chunks = Dictionary[of Vector3i, Chunk]()
-    #i = 0
+    #i = 0  
     for x in range(dimensionsInChunks.x):
       for y in range(dimensionsInChunks.y):
         for z in range(dimensionsInChunks.z):

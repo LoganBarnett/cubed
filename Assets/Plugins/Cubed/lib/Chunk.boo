@@ -66,12 +66,17 @@ class Chunk(MonoBehaviour):
           for z in range(begin.z, end.z):
             GameObject.Destroy(cubes[x,y,z].GameObject) if cubesToGenerate[x,y,z] == null and cubes[x,y,z] and cubes[x,y,z].GameObject
 
+    for x in range(begin.x, end.x):
+      for y in range(begin.y, end.y):
+        for z in range(begin.z, end.z):
+          cubesToGenerate[x,y,z].chunk = self if cubesToGenerate[x,y,z] 
 
     cubes = GenerateRenderableCubes(cubesToGenerate)
     vertices = List[of Vector3]()
     triangles = List[of int]()
     uvs = List of Vector2()
     #for block in cubes: # works well for matrixes
+
     for x in range(begin.x, end.x):
       for y in range(begin.y, end.y):
         for z in range(begin.z, end.z):
