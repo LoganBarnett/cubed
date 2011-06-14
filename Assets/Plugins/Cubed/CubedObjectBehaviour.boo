@@ -56,6 +56,11 @@ class CubedObjectBehaviour(MonoBehaviour):
 
   def GetCubeAt(position as Vector3):
     return cubedObject.GetCubeAt(position)
+
+  def RemoveCubeAt(gridPosition as Vector3i):
+    cube = cubedObject.Cubes[gridPosition.x, gridPosition.y, gridPosition.z]
+    return null if cube == null
+    return cube.Chunk.RemoveCube(gridPosition)
   
   def RemoveCubeAt(position as Vector3):
     cube = cubedObject.GetCubeAt(position)

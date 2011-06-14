@@ -128,6 +128,8 @@ class CubedObject:
     return chunks[key]
     
   def GetCubeAt(position as Vector3):
-    chunk = GetChunkAt(position)
-    cube = chunk.GetCubeAt(GetCubePointAt(position))
+    #chunk = GetChunkAt(position)
+    #cube = chunk.GetCubeAt(GetCubePointAt(position))
+    indexes = Vector3i(position.x / cubeSize, position.y / cubeSize, position.z / cubeSize)
+    cube = Cubes[indexes.x, indexes.y, indexes.z]
     return cube
