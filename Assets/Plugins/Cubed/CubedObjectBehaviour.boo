@@ -77,6 +77,9 @@ class CubedObjectBehaviour(MonoBehaviour):
     cubePlacement = cubedObject.GetCubePointAt(worldPosition)
     cubedObject.PlaceCube(cubePlacement, cube)
     
+  def GetGridPositionOf(worldPosition as Vector3):
+    return cubedObject.GetCubePointAt(worldPosition)
+    
   def Generate():
     for chunk in cubedObject.Chunks.Values:
       chunk.Generate(cubedObject.Cubes)
