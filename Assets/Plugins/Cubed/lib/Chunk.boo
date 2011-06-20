@@ -103,19 +103,31 @@ class Chunk(MonoBehaviour):
     for cube in cubes:
       serializedCubes.Add(cube)
     
-  def GetCubeAt(blockLocation as Vector3i):
-    indexes = Vector3i(blockLocation.x / blockWidth, blockLocation.y / blockWidth, blockLocation.z / blockWidth)
+  def GetCubeAt(cubeLocation as Vector3i):
+    indexes = Vector3i(cubeLocation.x / blockWidth, cubeLocation.y / blockWidth, cubeLocation.z / blockWidth)
     cube = cubes[indexes.x, indexes.y, indexes.z]
     return cube
   
-  def AddCube(blockLocation as Vector3i, blockGameObject as GameObject):
+  def AddCube(cubeLocation as Vector3i, cubeGameObject as GameObject):
     # TODO: fix the error - this doesn't actually catch anything
-    raise System.Exception("Cannot add: A block already exists at ${blockLocation}") if cubes[blockLocation.x, blockLocation.y, blockLocation.z]
+    raise System.Exception("Cannot add: A cube already exists at ${cubeLocation}") if cubes[cubeLocation.x, cubeLocation.y, cubeLocation.z]
     #newCubes = cubes.Clone() as (Cube, 3)
     newCubes = cubes
-    originalCube = blockGameObject.GetComponent of CubeBehaviour().cube
-    cube = Cube(Indexes: blockLocation, CubeWidth: blockWidth, Chunk: self, GameObject: blockGameObject, Type: originalCube.Type)
-    newCubes[blockLocation.x, blockLocation.y, blockLocation.z] = cube
+    originalCube = cubeGameObject.GetComponent of CubeBehaviour().cube
+    cube = Cube(Indexes: cubeLocation, CubeWidth: blockWidth, Chunk: self, GameObject: cubeGameObject, Type: originalCube.Type)
+    newCubes[cubeLocation.x, cubeLocation.y, cubeLocation.z] = cube
+    # TODO: Make a separate call
+    Generate(newCubes)
+    return cube
+    
+  def AddCube(cubeLocation as Vector3i, cube as Cube):
+    # TODO: fix the error - this doesn't actually catch anything
+    raise System.Exception("Cannot add: A cube already exists at ${cubeLocation}") if cubes[cubeLocation.x, cubeLocation.y, cubeLocation.z]
+    #newCubes = cubes.Clone() as (Cube, 3)
+    newCubes = cubes
+#    originalCube = cube
+#    cube = Cube(Indexes: cubeLocation, CubeWidth: blockWidth, Chunk: self, GameObject: cubeGameObject, Type: originalCube.Type)
+    newCubes[cubeLocation.x, cubeLocation.y, cubeLocation.z] = cube
     # TODO: Make a separate call
     Generate(newCubes)
     return cube

@@ -24,6 +24,10 @@ class CubedObject:
   chunks as Dictionary[of Vector3i, Chunk]
   allCubes as (Cube, 3)
   
+  Chunks as Dictionary[of Vector3i, Chunk]:
+    get:
+      return chunks
+      
   Cubes as (Cube, 3):
     get:
       return allCubes
@@ -119,6 +123,13 @@ class CubedObject:
     z = indexes.z / chunkDimensions.z
     chunk = chunks[Vector3i(x, y, z)]
     chunk.AddCube(indexes, cube)
+    
+  def PlaceCube(indexes as Vector3i, cube as Cube):
+    x = indexes.x / chunkDimensions.x
+    y = indexes.y / chunkDimensions.y
+    z = indexes.z / chunkDimensions.z
+    chunk = chunks[Vector3i(x, y, z)]
+    chunk.AddCube(indexes, cube)
   
   def GetChunkAt(position as Vector3):
     x = position.x / (chunkDimensions.x  * cubeSize)
@@ -126,6 +137,9 @@ class CubedObject:
     z = position.z / (chunkDimensions.z  * cubeSize)
     key = Vector3i(x, y, z)
     return chunks[key]
+    
+  def GetCubeAt(gridPosition as Vector3i):
+    return allCubes[gridPosition.x, gridPosition.y, gridPosition.z]
     
   def GetCubeAt(position as Vector3):
     #chunk = GetChunkAt(position)
