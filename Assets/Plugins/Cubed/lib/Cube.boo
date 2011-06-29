@@ -21,6 +21,7 @@ class Cube:
   public chunk as Chunk
   [Property(GameObject)]
   public gameObject as GameObject
+  public layer as LayerMask
   
   # is there ever a desire to have a non-uniform grid size (x/y/z different)?
   [Property(CubeWidth)]
@@ -41,6 +42,7 @@ class Cube:
       gameObject.transform.position = cubePosition
       gameObject.transform.parent = chunk.transform
     
+    gameObject.layer = layer
     gameObject.AddComponent of CubeBehaviour().cube = self
     gameObject.name = GetCubeName(indexes)
   
