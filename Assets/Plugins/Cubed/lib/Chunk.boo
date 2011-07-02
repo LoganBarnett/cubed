@@ -4,11 +4,13 @@ import UnityEngine
 import System.Collections.Generic
 
 class Chunk(MonoBehaviour):
-  public serializedCubes as List of Cube
+  #serializedCubes as List of Cube
   public cubes as (Cube, 3)
   public gridPosition as Vector3i
   public dimensionsInCubes as Vector3i
-  public cubeObject as CubedObject
+  
+  [Property(CubedObject)]
+  cubeObject as CubedObject
   
   [Property(CubeWidth)]
   public blockWidth = 10f
@@ -58,6 +60,7 @@ class Chunk(MonoBehaviour):
     return cubes
   
   def Generate(cubesToGenerate as (Cube, 3)):
+    Debug.Log("Generating cubes")
     begin = gridPosition * dimensionsInCubes
     end = begin + dimensionsInCubes
     if cubes != null:
@@ -99,9 +102,11 @@ class Chunk(MonoBehaviour):
     mesh.uv = uvs.ToArray()
     mesh.RecalculateNormals()
     
-    serializedCubes = List of Cube()
-    for cube in cubes:
-      serializedCubes.Add(cube)
+    collider.sharedMesh = mesh
+    collider.convex = false
+    #serializedCubes = List of Cube()
+    #for cube in cubes:
+      #serializedCubes.Add(cube)
     
   def GetCubeAt(cubeLocation as Vector3i):
     indexes = Vector3i(cubeLocation.x / blockWidth, cubeLocation.y / blockWidth, cubeLocation.z / blockWidth)
@@ -136,10 +141,11 @@ class Chunk(MonoBehaviour):
     cube = cubes[cubeLocation.x, cubeLocation.y, cubeLocation.z]
     if cube == null:
       raise System.Exception("Null cube found at ${cubeLocation}")
-    if cube.GameObject == null:
-      raise System.Exception("Missing game object on block to be destroyed (${cube.Indexes.x}, ${cube.Indexes.y}, ${cube.Indexes.z})")
-    GameObject.Destroy(cube.GameObject)
+    #if cube.GameObject == null:
+    #  raise System.Exception("Missing game object on block to be destroyed (${cube.Indexes.x}, ${cube.Indexes.y}, ${cube.Indexes.z})")
+    
+    #GameObject.Destroy(cube.GameObject) if cube.GameObject
     #newCubes = cubes.Clone() as (Cube, 3)
-    newCubes = cubes
-    newCubes[cubeLocation.x, cubeLocation.y, cubeLocation.z] = null
+#    newCubes = cubes
+    cubes[cubeLocation.x, cubeLocation.y, cubeLocation.z] = null
     return cube

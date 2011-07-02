@@ -71,7 +71,7 @@ class Cube:
       generateCollider = true
       GameObject.Destroy(gameObject)
     
-    CreateCollision() if generateCollider and cubeLegend.cubeDefinitions[type].hasCollision
+    #CreateCollision() if generateCollider and cubeLegend.cubeDefinitions[type].hasCollision
   
   def GetCubeName(gridPosition as Vector3i):
     return "Cube Collider (${gridPosition.x}, ${gridPosition.y}, ${gridPosition.z})"

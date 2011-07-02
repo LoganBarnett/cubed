@@ -86,6 +86,7 @@ class CubedObject:
     chunkGameObject = GameObject()
     chunkGameObject.AddComponent(MeshFilter)
     chunkGameObject.AddComponent(MeshRenderer)
+    chunkGameObject.AddComponent(MeshCollider)
     chunkComponent = chunkGameObject.AddComponent(Chunk)
     chunkComponent.CubeWidth = cubeSize
     chunkComponent.CubeMaterial = cubeMaterial
@@ -110,7 +111,7 @@ class CubedObject:
     chunkGameObject.name = "Chunk ${location.x}, ${location.y}, ${location.z}"
     chunk = chunkGameObject.GetComponent of Chunk()
     
-    chunk.cubeObject = self
+    chunk.CubedObject = self
     chunk.dimensionsInCubes = Vector3i(chunkDimensions.x, chunkDimensions.y, chunkDimensions.z)
     chunk.gridPosition = location
     chunks[location] = chunk
