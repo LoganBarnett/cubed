@@ -46,7 +46,7 @@ class CubedModelEditor(Editor):
     x = cubedObject.chunkDimensions.x * cubedObject.dimensionsInChunks.x
     y = cubedObject.chunkDimensions.y * cubedObject.dimensionsInChunks.y
     z = cubedObject.chunkDimensions.z * cubedObject.dimensionsInChunks.z
-    cubes = matrix(Cube, x,y,z)
+    cubes = matrix(Cube, x,y,z) unless cubes
     cubedObject.Generate(cubes)
     
   def OnDisable():
