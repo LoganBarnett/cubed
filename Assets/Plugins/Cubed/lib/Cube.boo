@@ -55,10 +55,10 @@ class Cube:
     triangles.Clear()
     uvs.Clear()
 
-    chunkPosition = (chunk.transform.position if chunk else Vector3.zero)
+    chunkPosition = (chunk.transform.localPosition if chunk else Vector3.zero)
     
     indexes = Vector3i() if not indexes
-    position = Vector3(indexes.x, indexes.y, indexes.z) * blockWidth
+    position = (Vector3(indexes.x, indexes.y, indexes.z) * blockWidth) - chunkPosition
 
     AddBottom(position, vertexCount, cubeLegend) unless AdjacentCubeExists(cubes, indexes.Down)
     AddTop   (position, vertexCount, cubeLegend) unless AdjacentCubeExists(cubes, indexes.Up)

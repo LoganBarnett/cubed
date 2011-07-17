@@ -7,7 +7,8 @@ import Cubed
 [CustomEditor(CubedObjectBehaviour)]
 class CubedModelEditor(Editor):
   #static def CreateModel():
-    
+  axisY = 0
+  
   static def GenerateCubes(cubedObject as CubedObjectBehaviour):
     try:
       cubedObject.SendMessage("GenerateCubes", cubedObject)
@@ -63,8 +64,8 @@ class CubedModelEditor(Editor):
 
   def DrawPaintingSelection(cubedObject as CubedObjectBehaviour):
     offset = cubedObject.transform.position
-    DrawPlaneY(cubedObject, offset, 0f)
-    DrawPlaneY(cubedObject, offset, cubedObject.cubeSize)
+    DrawPlaneY(cubedObject, offset, axisY * cubedObject.cubeSize)
+    DrawPlaneY(cubedObject, offset, cubedObject.cubeSize + (axisY * cubedObject.cubeSize))
     DrawConnectionY(cubedObject, offset)
     CreatePlaneCollisionY(cubedObject)
     
@@ -78,7 +79,7 @@ class CubedModelEditor(Editor):
 #    y = cubedObject.chunkDimensions.y * cubedObject.dimensionsInChunks.y
     z = cubedObject.chunkDimensions.z * cubedObject.dimensionsInChunks.z
     collision.transform.localScale = Vector3(x, 1f, z) * cubedObject.cubeSize
-    offset = Vector3(x, cubedObject.cubeSize, z) / 2f
+    offset = Vector3(x, cubedObject.cubeSize * axisY, z) / 2f
     collision.transform.position = cubedObject.transform.position + offset
     collision.renderer.enabled = false
     
@@ -96,8 +97,8 @@ class CubedModelEditor(Editor):
   def DrawConnectionY(cubedObject as CubedObjectBehaviour, offset as Vector3):
     for x in range(0, (cubedObject.chunkDimensions.x * cubedObject.dimensionsInChunks.x) + 1):
       for z in range(0, (cubedObject.chunkDimensions.z * cubedObject.dimensionsInChunks.z) + 1):
-        start = Vector3(x * cubedObject.cubeSize, 0f, z * cubedObject.cubeSize)
-        end = Vector3(x * cubedObject.cubeSize, cubedObject.cubeSize, z * cubedObject.cubeSize)
+        start = Vector3(x * cubedObject.cubeSize, axisY * cubedObject.cubeSize, z * cubedObject.cubeSize)
+        end = Vector3(x * cubedObject.cubeSize, cubedObject.cubeSize + (axisY * cubedObject.cubeSize), z * cubedObject.cubeSize)
         Debug.DrawLine(start + offset, end + offset, Color.yellow)
 
   def HandleInput(cubedObject as CubedObjectBehaviour):
@@ -105,21 +106,26 @@ class CubedModelEditor(Editor):
       Event.current.Use()
       ChangeAxis()
     elif Event.current.type == EventType.MouseDown and Event.current.button == 0:
-      Debug.Log("click")
       Event.current.Use()
       PlaceCubeAtMouseLocation(Event.current.mousePosition, cubedObject)
     elif Event.current.type == EventType.ScrollWheel:
       Event.current.Use()
-      MoveAlongSelectionAxis(Event.current.delta)
+      MoveAlongSelectionAxis(cubedObject, Event.current.delta)
   
-  def MoveAlongSelectionAxis(delta as Vector2):
-    pass
+  def MoveAlongSelectionAxis(cubedObject as CubedObjectBehaviour, delta as Vector2):
+    axisY -= delta.y
+    axisY = 0 if axisY < 0
+    maxY = (cubedObject.chunkDimensions.y * cubedObject.dimensionsInChunks.y) - 1
+    axisY = maxY if axisY > maxY
+    #Debug.Log(axisY)
   
   def PlaceCubeAtMouseLocation(position as Vector2, cubedObject as CubedObjectBehaviour):
     hits = Physics.RaycastAll(HandleUtility.GUIPointToWorldRay(position), Mathf.Infinity);
     hits = hits.OrderBy({hit| hit.distance}).ToArray();
-    Debug.Log("Placing at: ${hits[0].point}")
-    cubedObject.PlaceCubeAt(hits[0].point, Cube())
+    
+    y = cubedObject.transform.position.y + (axisY * cubedObject.cubeSize)
+    placement = Vector3(hits[0].point.x, y, hits[0].point.z)
+    cubedObject.PlaceCubeAt(placement, Cube())
     
   def ChangeAxis():
     pass
