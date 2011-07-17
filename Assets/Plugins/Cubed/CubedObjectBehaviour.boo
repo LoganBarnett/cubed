@@ -42,7 +42,7 @@ class CubedObjectBehaviour(MonoBehaviour):
     cubedObject.gameObject = gameObject
     # just create a full chunk for testing
     #Debug.Log(allCubes == null)
-    cubedObject.GenerateChunks(dimensionsInChunks, allCubes)
+    cubedObject.GenerateChunks(dimensionsInChunks, allCubes, transform.position)
   
   def DestroyChildren():
     children = List of GameObject()
@@ -72,14 +72,21 @@ class CubedObjectBehaviour(MonoBehaviour):
   
   def PlaceCubeAt(gridPosition as Vector3i, cube as Cube):
     cubedObject.PlaceCube(gridPosition, cube)
+    
+  def PlaceCubeAt(worldPosition as Vector3, cube as Cube):
+    cubePlacement = GetGridPositionOf(worldPosition - transform.position)
+    Debug.Log("Grid placement: ${cubePlacement}")
+    cubedObject.PlaceCube(cubePlacement, cube)
   
   def PlaceCubeAt(worldPosition as Vector3, cube as GameObject):
-    cubePlacement = cubedObject.GetCubePointAt(worldPosition)
+    cubePlacement = GetGridPositionOf(worldPosition - transform.position)
     cubedObject.PlaceCube(cubePlacement, cube)
-    
-  def GetGridPositionOf(worldPosition as Vector3):
-    return cubedObject.GetCubePointAt(worldPosition)
     
   def Generate():
     for chunk in cubedObject.Chunks.Values:
       chunk.Generate(cubedObject.Cubes)
+      
+  def GetGridPositionOf(worldPosition as Vector3):
+    cubePosition = worldPosition / cubeSize
+    cubeIndexes = Vector3i(cubePosition)
+    return cubeIndexes

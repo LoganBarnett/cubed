@@ -36,13 +36,12 @@ class Chunk(MonoBehaviour):
     #cubes = cubeObject.allCubes
     pass
   
-  def CalculateRenderableCube(cube as Cube, ref vertexCount as int, cubes as (Cube, 3)):
+  def CalculateRenderableCube(cube as Cube, ref vertexCount as int, cubes as (Cube, 3), gridPosition as Vector3i):
     #gridPosition = Vector3i(x, y, z)
     #cube = cubes[x,y,z]
     return null if cube == null
     cube.CubeWidth = blockWidth
-    #cube.Indexes = gridPosition
-    
+    cube.indexes = gridPosition
     cube.Chunk = self
     cube.Calculate(cube.indexes, vertexCount, cubes, cubeLegend)
     return cube
@@ -56,18 +55,18 @@ class Chunk(MonoBehaviour):
         for cubeZ in range(begin.z, end.z):
           cube = cubes[cubeX, cubeY, cubeZ]
           continue if cube == null
-          cubes[cubeX, cubeY, cubeZ] = CalculateRenderableCube(cube, vertexCount, cubes)
+          cubeGridPosition = Vector3i(cubeX, cubeY, cubeZ)
+          cubes[cubeX, cubeY, cubeZ] = CalculateRenderableCube(cube, vertexCount, cubes, cubeGridPosition)
     return cubes
   
   def Generate(cubesToGenerate as (Cube, 3)):
-    Debug.Log("Generating cubes")
     begin = gridPosition * dimensionsInCubes
     end = begin + dimensionsInCubes
-    if cubes != null:
-      for x in range(begin.x, end.x):
-        for y in range(begin.y, end.y):
-          for z in range(begin.z, end.z):
-            GameObject.Destroy(cubes[x,y,z].GameObject) if cubesToGenerate[x,y,z] == null and cubes[x,y,z] and cubes[x,y,z].GameObject
+#    if cubes != null:
+#      for x in range(begin.x, end.x):
+#        for y in range(begin.y, end.y):
+#          for z in range(begin.z, end.z):
+#            GameObject.Destroy(cubes[x,y,z].GameObject) if cubesToGenerate[x,y,z] == null and cubes[x,y,z] and cubes[x,y,z].GameObject
 
     for x in range(begin.x, end.x):
       for y in range(begin.y, end.y):
@@ -117,35 +116,25 @@ class Chunk(MonoBehaviour):
     # TODO: fix the error - this doesn't actually catch anything
     raise System.Exception("Cannot add: A cube already exists at ${cubeLocation}") if cubes[cubeLocation.x, cubeLocation.y, cubeLocation.z]
     #newCubes = cubes.Clone() as (Cube, 3)
-    newCubes = cubes
     originalCube = cubeGameObject.GetComponent of CubeBehaviour().cube
     cube = Cube(Indexes: cubeLocation, CubeWidth: blockWidth, Chunk: self, GameObject: cubeGameObject, Type: originalCube.Type)
-    newCubes[cubeLocation.x, cubeLocation.y, cubeLocation.z] = cube
+    cubes[cubeLocation.x, cubeLocation.y, cubeLocation.z] = cube
     # TODO: Make a separate call
-    Generate(newCubes)
+    Generate(cubes)
     return cube
     
   def AddCube(cubeLocation as Vector3i, cube as Cube):
     # TODO: fix the error - this doesn't actually catch anything
     raise System.Exception("Cannot add: A cube already exists at ${cubeLocation}") if cubes[cubeLocation.x, cubeLocation.y, cubeLocation.z]
-    #newCubes = cubes.Clone() as (Cube, 3)
-    newCubes = cubes
-#    originalCube = cube
-#    cube = Cube(Indexes: cubeLocation, CubeWidth: blockWidth, Chunk: self, GameObject: cubeGameObject, Type: originalCube.Type)
-    newCubes[cubeLocation.x, cubeLocation.y, cubeLocation.z] = cube
+    cubes[cubeLocation.x, cubeLocation.y, cubeLocation.z] = cube
     # TODO: Make a separate call
-    Generate(newCubes)
+    Generate(cubes)
     return cube
     
   def RemoveCube(cubeLocation as Vector3i):
     cube = cubes[cubeLocation.x, cubeLocation.y, cubeLocation.z]
     if cube == null:
       raise System.Exception("Null cube found at ${cubeLocation}")
-    #if cube.GameObject == null:
-    #  raise System.Exception("Missing game object on block to be destroyed (${cube.Indexes.x}, ${cube.Indexes.y}, ${cube.Indexes.z})")
-    
-    #GameObject.Destroy(cube.GameObject) if cube.GameObject
-    #newCubes = cubes.Clone() as (Cube, 3)
-#    newCubes = cubes
+
     cubes[cubeLocation.x, cubeLocation.y, cubeLocation.z] = null
     return cube

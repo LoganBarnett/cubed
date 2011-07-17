@@ -39,6 +39,9 @@ class Vector3i:
   def ToString():
     return "(${x}, ${y}, ${z})"
   
+  def ToVector3():
+    return Vector3(x, y, z)
+    
   # not sure how robust this is, should work for a large set of small numbers
   override def GetHashCode():
     return ToString().GetHashCode()

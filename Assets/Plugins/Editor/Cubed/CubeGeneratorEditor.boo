@@ -3,7 +3,8 @@ import UnityEditor
 import System.Linq.Enumerable
 import System.Collections.Generic
 
-[CustomEditor(CubedObjectBehaviour)]
+#[CustomEditor(CubedObjectBehaviour)]
+# TODO: Merge into main editor
 class CubeGeneratorEditor(Editor):
 #  [MenuItem("Cubed/Generate Cubes")]
 #  static def GenerateCubes(): 
@@ -40,7 +41,7 @@ class CubeGeneratorEditor(Editor):
     material.color = Color.white
     cubedObject.material = material
     Debug.Log("Packing ${textures.Count} Textures complete.")
-        
+            
   def OnInspectorGUI():
     if (GUILayout.Button("Bake Cubes")):
       GenerateCubes(target as CubedObjectBehaviour)

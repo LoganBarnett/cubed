@@ -53,7 +53,7 @@ class CubedObject:
         chunk.cubes = allCubes
         chunks[chunkVectors[i]] = chunk
     
-  def GenerateChunks(newDimensionsInChunks as Vector3i, cubes as (Cube, 3)):
+  def GenerateChunks(newDimensionsInChunks as Vector3i, cubes as (Cube, 3), offset as Vector3):
     allCubes = cubes
       
     dimensionsInChunks = newDimensionsInChunks
@@ -67,7 +67,7 @@ class CubedObject:
       for y in range(dimensionsInChunks.y):
         for z in range(dimensionsInChunks.z):
           location = Vector3i(x, y, z)
-          GenerateChunk(location, cubes)
+          GenerateChunk(location, cubes, offset)
     
     chunkVectors = chunks.Keys.ToList()
     chunkChunks = chunks.Values.ToList()
@@ -94,20 +94,16 @@ class CubedObject:
     chunkGameObject.tag = "cubed_chunk"
     chunkComponent.CubeLegend = cubeLegend
     chunkGameObject.transform.parent = gameObject.transform
+    #chunkGameObject.transform.localScale = Vector3.one
     return chunkGameObject
     
-  def GetCubePointAt(worldPosition as Vector3):
-    cubePosition = worldPosition / cubeSize
-    cubeIndexes = Vector3i(cubePosition.x, cubePosition.y, cubePosition.z)
-    return cubeIndexes
-        
-  def GenerateChunk(location as Vector3i, cubes as (Cube, 3)):
+  def GenerateChunk(location as Vector3i, cubes as (Cube, 3), offset as Vector3):
     # TODO: Put this back in when preprocessor directives are supported in Boo
     # Use UNITY_EDITOR
     #CubeGeneratorProgressEditor.ReportChunk(Vector3i(location.x, location.y, location.z))
     
     chunkGameObject = MakeChunk()
-    chunkGameObject.transform.position = Vector3(location.x * chunkDimensions.x * cubeSize, location.y * chunkDimensions.y * cubeSize, location.z * chunkDimensions.z * cubeSize)
+    chunkGameObject.transform.position = (Vector3(location.x * chunkDimensions.x, location.y * chunkDimensions.y, location.z * chunkDimensions.z) * cubeSize) + offset
     chunkGameObject.name = "Chunk ${location.x}, ${location.y}, ${location.z}"
     chunk = chunkGameObject.GetComponent of Chunk()
     
@@ -130,6 +126,7 @@ class CubedObject:
     y = indexes.y / chunkDimensions.y
     z = indexes.z / chunkDimensions.z
     chunk = chunks[Vector3i(x, y, z)]
+    Debug.Log("Indexes: ${indexes}")
     chunk.AddCube(indexes, cube)
   
   def GetChunkAt(position as Vector3):
