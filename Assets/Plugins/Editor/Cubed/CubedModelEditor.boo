@@ -7,6 +7,7 @@ import Cubed
 [CustomEditor(CubedObjectBehaviour)]
 class CubedModelEditor(Editor):
   #static def CreateModel():
+  scrollY = 0f
   axisY = 0
   
   static def GenerateCubes(cubedObject as CubedObjectBehaviour):
@@ -113,7 +114,8 @@ class CubedModelEditor(Editor):
       MoveAlongSelectionAxis(cubedObject, Event.current.delta)
   
   def MoveAlongSelectionAxis(cubedObject as CubedObjectBehaviour, delta as Vector2):
-    axisY -= delta.y
+    scrollY -= delta.y
+    axisY = scrollY
     axisY = 0 if axisY < 0
     maxY = (cubedObject.chunkDimensions.y * cubedObject.dimensionsInChunks.y) - 1
     axisY = maxY if axisY > maxY
