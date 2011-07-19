@@ -126,7 +126,6 @@ class CubedObject:
     y = indexes.y / chunkDimensions.y
     z = indexes.z / chunkDimensions.z
     chunk = chunks[Vector3i(x, y, z)]
-    Debug.Log("Indexes: ${indexes}")
     chunk.AddCube(indexes, cube)
   
   def GetChunkAt(position as Vector3):

@@ -105,7 +105,8 @@ class CubedModelEditor(Editor):
   def HandleInput(cubedObject as CubedObjectBehaviour):
     if Event.current.type == EventType.MouseDown and Event.current.button == 1: #and (Event.current.modifiers != EventModifiers.Alt and Event.current.modifiers == EventModifiers.Shift):
       Event.current.Use()
-      ChangeAxis()
+      #ChangeAxis()
+      RemoveCubeAtMouseLocation(Event.current.mousePosition, cubedObject)
     elif Event.current.type == EventType.MouseDown and Event.current.button == 0:
       Event.current.Use()
       PlaceCubeAtMouseLocation(Event.current.mousePosition, cubedObject)
@@ -131,4 +132,13 @@ class CubedModelEditor(Editor):
     
   def ChangeAxis():
     pass
+    
+  def RemoveCubeAtMouseLocation(position as Vector2, cubedObject as CubedObjectBehaviour):
+    hits = Physics.RaycastAll(HandleUtility.GUIPointToWorldRay(position), Mathf.Infinity);
+    hits = hits.OrderBy({hit| hit.distance}).ToArray();
+    
+    y = cubedObject.transform.position.y + (axisY * cubedObject.cubeSize)
+    cubePosition = Vector3(hits[0].point.x, y, hits[0].point.z)
+    cube = cubedObject.RemoveCubeAt(cubePosition)
+    cube.Chunk.Generate(cube.Chunk.cubes)
     

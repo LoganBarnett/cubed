@@ -66,7 +66,8 @@ class CubedObjectBehaviour(MonoBehaviour):
     return cube.Chunk.RemoveCube(gridPosition)
   
   def RemoveCubeAt(position as Vector3):
-    cube = cubedObject.GetCubeAt(position)
+    relativePosition = position - transform.position
+    cube = cubedObject.GetCubeAt(relativePosition)
     return null if cube == null
     return cube.Chunk.RemoveCube(cube.Indexes)
   
@@ -75,7 +76,6 @@ class CubedObjectBehaviour(MonoBehaviour):
     
   def PlaceCubeAt(worldPosition as Vector3, cube as Cube):
     cubePlacement = GetGridPositionOf(worldPosition - transform.position)
-    Debug.Log("Grid placement: ${cubePlacement}")
     cubedObject.PlaceCube(cubePlacement, cube)
   
   def PlaceCubeAt(worldPosition as Vector3, cube as GameObject):
