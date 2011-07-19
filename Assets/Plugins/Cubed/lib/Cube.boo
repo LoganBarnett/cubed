@@ -25,7 +25,7 @@ class Cube:
   
   # is there ever a desire to have a non-uniform grid size (x/y/z different)?
   [Property(CubeWidth)]
-  blockWidth as single
+  cubeSize as single
   
   generateCollider = false
   
@@ -34,9 +34,9 @@ class Cube:
     gameObject.tag = "cubed_cube"
     gameObject.AddComponent of BoxCollider()
     collider = gameObject.collider as BoxCollider
-    collider.size = Vector3(blockWidth, blockWidth, blockWidth)
-    offsetInChunk = (Vector3(indexes.x, indexes.y, indexes.z) * blockWidth)
-    halfSize = Vector3(blockWidth, blockWidth, blockWidth) / 2f
+    collider.size = Vector3(cubeSize, cubeSize, cubeSize)
+    offsetInChunk = (Vector3(indexes.x, indexes.y, indexes.z) * cubeSize)
+    halfSize = Vector3(cubeSize, cubeSize, cubeSize) / 2f
     if chunk:
       cubePosition = offsetInChunk + halfSize
       gameObject.transform.position = cubePosition
@@ -58,7 +58,7 @@ class Cube:
     chunkPosition = (chunk.transform.localPosition if chunk else Vector3.zero)
     
     indexes = Vector3i() if not indexes
-    position = (Vector3(indexes.x, indexes.y, indexes.z) * blockWidth) - chunkPosition
+    position = (Vector3(indexes.x, indexes.y, indexes.z) * cubeSize) - chunkPosition
 
     AddBottom(position, vertexCount, cubeLegend) unless AdjacentCubeExists(cubes, indexes.Down)
     AddTop   (position, vertexCount, cubeLegend) unless AdjacentCubeExists(cubes, indexes.Up)
@@ -77,10 +77,10 @@ class Cube:
     return "Cube Collider (${gridPosition.x}, ${gridPosition.y}, ${gridPosition.z})"
   
   def AddBottom(position as Vector3, ref vertexCount as int, cubeLegend as CubeLegend):
-    Vertices.Add(Vector3(position.x + blockWidth, position.y, position.z))
-    Vertices.Add(Vector3(position.x + blockWidth, position.y, position.z + blockWidth))
+    Vertices.Add(Vector3(position.x + cubeSize, position.y, position.z))
+    Vertices.Add(Vector3(position.x + cubeSize, position.y, position.z + cubeSize))
     Vertices.Add(position)
-    Vertices.Add(Vector3(position.x, position.y, position.z + blockWidth))
+    Vertices.Add(Vector3(position.x, position.y, position.z + cubeSize))
 
     Uvs.AddRange(cubeLegend.UvsFor(type, Direction.Down))
     AddTriangles(vertexCount)
@@ -88,10 +88,10 @@ class Cube:
     vertexCount += 4;
   
   def AddTop(position as Vector3, ref vertexCount as int, cubeLegend as CubeLegend):
-    Vertices.Add(Vector3(position.x, position.y + blockWidth, position.z))
-    Vertices.Add(Vector3(position.x, position.y + blockWidth, position.z + blockWidth))
-    Vertices.Add(Vector3(position.x + blockWidth, position.y + blockWidth, position.z))
-    Vertices.Add(Vector3(position.x + blockWidth, position.y + blockWidth, position.z + blockWidth))
+    Vertices.Add(Vector3(position.x, position.y + cubeSize, position.z))
+    Vertices.Add(Vector3(position.x, position.y + cubeSize, position.z + cubeSize))
+    Vertices.Add(Vector3(position.x + cubeSize, position.y + cubeSize, position.z))
+    Vertices.Add(Vector3(position.x + cubeSize, position.y + cubeSize, position.z + cubeSize))
     
     Uvs.AddRange(cubeLegend.UvsFor(type, Direction.Up))
     AddTriangles(vertexCount)
@@ -99,10 +99,10 @@ class Cube:
     vertexCount += 4;
   
   def AddRight(position as Vector3, ref vertexCount as int, cubeLegend as CubeLegend):
-    Vertices.Add(Vector3(position.x + blockWidth, position.y, position.z))
-    Vertices.Add(Vector3(position.x + blockWidth, position.y + blockWidth, position.z))
-    Vertices.Add(Vector3(position.x + blockWidth, position.y, position.z + blockWidth))
-    Vertices.Add(Vector3(position.x + blockWidth, position.y + blockWidth, position.z + blockWidth))
+    Vertices.Add(Vector3(position.x + cubeSize, position.y, position.z))
+    Vertices.Add(Vector3(position.x + cubeSize, position.y + cubeSize, position.z))
+    Vertices.Add(Vector3(position.x + cubeSize, position.y, position.z + cubeSize))
+    Vertices.Add(Vector3(position.x + cubeSize, position.y + cubeSize, position.z + cubeSize))
     
     Uvs.AddRange(cubeLegend.UvsFor(type, Direction.Right))
     AddTriangles(vertexCount)
@@ -110,10 +110,10 @@ class Cube:
     vertexCount += 4;
   
   def AddLeft(position as Vector3, ref vertexCount as int, cubeLegend as CubeLegend):
-    Vertices.Add(Vector3(position.x, position.y, position.z + blockWidth))
-    Vertices.Add(Vector3(position.x, position.y + blockWidth, position.z + blockWidth))
+    Vertices.Add(Vector3(position.x, position.y, position.z + cubeSize))
+    Vertices.Add(Vector3(position.x, position.y + cubeSize, position.z + cubeSize))
     Vertices.Add(Vector3(position.x, position.y, position.z))
-    Vertices.Add(Vector3(position.x, position.y + blockWidth, position.z))
+    Vertices.Add(Vector3(position.x, position.y + cubeSize, position.z))
  
     Uvs.AddRange(cubeLegend.UvsFor(type, Direction.Left))
     AddTriangles(vertexCount)
@@ -121,10 +121,10 @@ class Cube:
     vertexCount += 4;
   
   def AddFront(position as Vector3, ref vertexCount as int, cubeLegend as CubeLegend):
-    Vertices.Add(Vector3(position.x + blockWidth, position.y, position.z + blockWidth))
-    Vertices.Add(Vector3(position.x + blockWidth, position.y + blockWidth, position.z + blockWidth))
-    Vertices.Add(Vector3(position.x, position.y, position.z + blockWidth))
-    Vertices.Add(Vector3(position.x, position.y + blockWidth, position.z + blockWidth))
+    Vertices.Add(Vector3(position.x + cubeSize, position.y, position.z + cubeSize))
+    Vertices.Add(Vector3(position.x + cubeSize, position.y + cubeSize, position.z + cubeSize))
+    Vertices.Add(Vector3(position.x, position.y, position.z + cubeSize))
+    Vertices.Add(Vector3(position.x, position.y + cubeSize, position.z + cubeSize))
     
     Uvs.AddRange(cubeLegend.UvsFor(type, Direction.Front))
     AddTriangles(vertexCount)
@@ -133,9 +133,9 @@ class Cube:
   
   def AddBack(position as Vector3, ref vertexCount as int, cubeLegend as CubeLegend):
     Vertices.Add(Vector3(position.x, position.y, position.z))
-    Vertices.Add(Vector3(position.x, position.y + blockWidth, position.z))
-    Vertices.Add(Vector3(position.x + blockWidth, position.y, position.z))
-    Vertices.Add(Vector3(position.x + blockWidth, position.y + blockWidth, position.z))
+    Vertices.Add(Vector3(position.x, position.y + cubeSize, position.z))
+    Vertices.Add(Vector3(position.x + cubeSize, position.y, position.z))
+    Vertices.Add(Vector3(position.x + cubeSize, position.y + cubeSize, position.z))
     
     Uvs.AddRange(cubeLegend.UvsFor(type, Direction.Back))
     AddTriangles(vertexCount)

@@ -13,7 +13,7 @@ class Chunk(MonoBehaviour):
   cubeObject as CubedObject
   
   [Property(CubeWidth)]
-  public blockWidth = 10f
+  public cubeSize = 10f
   
   [Property(CubeMaterial)]
   public blockMaterial as Material
@@ -40,7 +40,7 @@ class Chunk(MonoBehaviour):
     #gridPosition = Vector3i(x, y, z)
     #cube = cubes[x,y,z]
     return null if cube == null
-    cube.CubeWidth = blockWidth
+    cube.CubeWidth = cubeSize
     cube.indexes = gridPosition
     cube.Chunk = self
     cube.Calculate(cube.indexes, vertexCount, cubes, cubeLegend)
@@ -108,7 +108,7 @@ class Chunk(MonoBehaviour):
       #serializedCubes.Add(cube)
     
   def GetCubeAt(cubeLocation as Vector3i):
-    indexes = Vector3i(cubeLocation.x / blockWidth, cubeLocation.y / blockWidth, cubeLocation.z / blockWidth)
+    indexes = Vector3i(cubeLocation.x / cubeSize, cubeLocation.y / cubeSize, cubeLocation.z / cubeSize)
     cube = cubes[indexes.x, indexes.y, indexes.z]
     return cube
   
@@ -117,7 +117,7 @@ class Chunk(MonoBehaviour):
     raise System.Exception("Cannot add: A cube already exists at ${cubeLocation}") if cubes[cubeLocation.x, cubeLocation.y, cubeLocation.z]
     #newCubes = cubes.Clone() as (Cube, 3)
     originalCube = cubeGameObject.GetComponent of CubeBehaviour().cube
-    cube = Cube(Indexes: cubeLocation, CubeWidth: blockWidth, Chunk: self, GameObject: cubeGameObject, Type: originalCube.Type)
+    cube = Cube(Indexes: cubeLocation, CubeWidth: cubeSize, Chunk: self, GameObject: cubeGameObject, Type: originalCube.Type)
     cubes[cubeLocation.x, cubeLocation.y, cubeLocation.z] = cube
     # TODO: Make a separate call
     Generate(cubes)
