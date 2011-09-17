@@ -1,4 +1,3 @@
-namespace Cubed
 import UnityEngine;
 
 class Vector3i:

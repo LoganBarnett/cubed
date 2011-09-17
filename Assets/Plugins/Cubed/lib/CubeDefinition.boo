@@ -1,4 +1,3 @@
-namespace Cubed
 import UnityEngine
 
 [System.Serializable]

@@ -101,8 +101,9 @@ class Chunk(MonoBehaviour):
     mesh.uv = uvs.ToArray()
     mesh.RecalculateNormals()
     
-    collider.sharedMesh = mesh
-    collider.convex = false
+    meshCollider = collider as MeshCollider
+    meshCollider.sharedMesh = mesh
+    meshCollider.convex = false
     #serializedCubes = List of Cube()
     #for cube in cubes:
       #serializedCubes.Add(cube)
