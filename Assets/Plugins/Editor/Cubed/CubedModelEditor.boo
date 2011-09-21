@@ -2,7 +2,6 @@ import UnityEngine
 import UnityEditor
 import System.Linq.Enumerable
 import System.Collections.Generic
-import Cubed
 
 [CustomEditor(CubedObjectBehaviour)]
 class CubedModelEditor(Editor):
@@ -44,12 +43,18 @@ class CubedModelEditor(Editor):
   def OnEnable():
     CubedEditorBackdrop.EnsureBackdropExists(target as CubedObjectBehaviour)
     cubedObject = target as CubedObjectBehaviour
+    cubedObject.cubedObject.Initialize()
     cubes = cubedObject.cubedObject.Cubes
     x = cubedObject.chunkDimensions.x * cubedObject.dimensionsInChunks.x
     y = cubedObject.chunkDimensions.y * cubedObject.dimensionsInChunks.y
     z = cubedObject.chunkDimensions.z * cubedObject.dimensionsInChunks.z
-    cubes = matrix(Cube, x,y,z) unless cubes
-    cubedObject.Generate(cubes)
+
+    if cubes:
+      Debug.Log(len(cubes))
+    else:
+      cubedObject.Generate(cubes)
+      cubes = matrix(Cube, x,y,z)
+      Debug.Log("no cubes")
     
   def OnDisable():
     CubedEditorBackdrop.DestroyBackdrop()
@@ -128,7 +133,10 @@ class CubedModelEditor(Editor):
     
     y = cubedObject.transform.position.y + (axisY * cubedObject.cubeSize)
     placement = Vector3(hits[0].point.x, y, hits[0].point.z)
-    cubedObject.PlaceCubeAt(placement, Cube())
+    
+    cube = cubedObject.PlaceCubeAt(placement, Cube())
+    cube.Chunk.Generate()
+    cubedObject.Save()
     
   def ChangeAxis():
     pass
@@ -140,5 +148,6 @@ class CubedModelEditor(Editor):
     y = cubedObject.transform.position.y + (axisY * cubedObject.cubeSize)
     cubePosition = Vector3(hits[0].point.x, y, hits[0].point.z)
     cube = cubedObject.RemoveCubeAt(cubePosition)
-    cube.Chunk.Generate(cube.Chunk.cubes)
+    Debug.Log(cube != null)
+    cube.Chunk.Generate()
     

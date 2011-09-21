@@ -1,5 +1,3 @@
-import Cubed
-
 class CubePatternGenerator:
   static def GenerateFilledCubeGrid(cubedObject as CubedObjectBehaviour):
     totalX = cubedObject.chunkDimensions.x * cubedObject.dimensionsInChunks.x

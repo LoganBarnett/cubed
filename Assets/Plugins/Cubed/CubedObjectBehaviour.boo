@@ -3,8 +3,6 @@ import System.Linq.Enumerable
 
 #import System.Collections.Generic
 
-import Cubed
-
 #[RequireComponent(MeshFilter)]
 #[RequireComponent(MeshRenderer)]
 #[RequireComponent(MeshCollider)]
@@ -52,26 +50,26 @@ class CubedObjectBehaviour(MonoBehaviour):
     return cubedObject.GetCubeAt(gridPosition)
 
   def RemoveCubeAt(gridPosition as Vector3i):
-    cube = cubedObject.Cubes[gridPosition.x, gridPosition.y, gridPosition.z]
-    return null if cube == null
-    return cube.Chunk.RemoveCube(gridPosition)
+#    cube = cubedObject.Cubes[gridPosition.x, gridPosition.y, gridPosition.z]
+#    return null if cube == null
+    return cubedObject.RemoveCube(gridPosition)
   
   def RemoveCubeAt(position as Vector3):
     relativePosition = position - transform.position
     cube = cubedObject.GetCubeAt(relativePosition)
     return null if cube == null
-    return cube.Chunk.RemoveCube(cube.Indexes)
+    return cubedObject.RemoveCube(cube.Indexes)
   
   def PlaceCubeAt(gridPosition as Vector3i, cube as Cube):
-    cubedObject.PlaceCube(gridPosition, cube)
+    return cubedObject.PlaceCube(gridPosition, cube)
     
   def PlaceCubeAt(worldPosition as Vector3, cube as Cube):
     cubePlacement = GetGridPositionOf(worldPosition - transform.position)
-    cubedObject.PlaceCube(cubePlacement, cube)
+    return cubedObject.PlaceCube(cubePlacement, cube)
   
   def PlaceCubeAt(worldPosition as Vector3, cube as GameObject):
     cubePlacement = GetGridPositionOf(worldPosition - transform.position)
-    cubedObject.PlaceCube(cubePlacement, cube)
+    return cubedObject.PlaceCube(cubePlacement, cube)
     
   def Generate():
     for chunk in cubedObject.Chunks.Values:
@@ -81,3 +79,10 @@ class CubedObjectBehaviour(MonoBehaviour):
     cubePosition = worldPosition / cubeSize
     cubeIndexes = Vector3i(cubePosition)
     return cubeIndexes
+    
+  def Save():
+    cubedObject.cubeCubes.Clear()
+    cubedObject.cubeVectors.Clear()
+    for cube in cubedObject.Cubes:
+      cubedObject.cubeCubes.Add(cube)
+      cubedObject.cubeVectors.Add(cube.indexes) if cube

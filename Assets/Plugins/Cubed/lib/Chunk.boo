@@ -1,11 +1,10 @@
-import Cubed
 import UnityEngine
 #import System.Linq.Enumerable
 import System.Collections.Generic
 
 class Chunk(MonoBehaviour):
   #serializedCubes as List of Cube
-  public cubes as (Cube, 3)
+  #public cubes as (Cube, 3)
   public gridPosition as Vector3i
   public dimensionsInCubes as Vector3i
   
@@ -59,7 +58,13 @@ class Chunk(MonoBehaviour):
           cubes[cubeX, cubeY, cubeZ] = CalculateRenderableCube(cube, vertexCount, cubes, cubeGridPosition)
     return cubes
   
+  def Generate():
+    Debug.Log(cubeObject.Cubes != null)
+    
+    Generate(cubeObject.Cubes)
+    
   def Generate(cubesToGenerate as (Cube, 3)):
+    Debug.Log(cubesToGenerate != null)
     begin = gridPosition * dimensionsInCubes
     end = begin + dimensionsInCubes
 #    if cubes != null:
@@ -107,32 +112,14 @@ class Chunk(MonoBehaviour):
     #serializedCubes = List of Cube()
     #for cube in cubes:
       #serializedCubes.Add(cube)
-    
-  def GetCubeAt(cubeLocation as Vector3i):
-    indexes = Vector3i(cubeLocation.x / cubeSize, cubeLocation.y / cubeSize, cubeLocation.z / cubeSize)
-    cube = cubes[indexes.x, indexes.y, indexes.z]
-    return cube
   
   def AddCube(cubeLocation as Vector3i, cubeGameObject as GameObject):
-    # TODO: fix the error - this doesn't actually catch anything
-    raise System.Exception("Cannot add: A cube already exists at ${cubeLocation}") if cubes[cubeLocation.x, cubeLocation.y, cubeLocation.z]
-    #newCubes = cubes.Clone() as (Cube, 3)
     originalCube = cubeGameObject.GetComponent of CubeBehaviour().cube
     cube = Cube(Indexes: cubeLocation, CubeWidth: cubeSize, Chunk: self, Type: originalCube.Type)
     cube.gameObject = cubeGameObject
-    cubes[cubeLocation.x, cubeLocation.y, cubeLocation.z] = cube
     return cube
     
   def AddCube(cubeLocation as Vector3i, cube as Cube):
-    # TODO: fix the error - this doesn't actually catch anything
-    raise System.Exception("Cannot add: A cube already exists at ${cubeLocation}") if cubes[cubeLocation.x, cubeLocation.y, cubeLocation.z]
-    cubes[cubeLocation.x, cubeLocation.y, cubeLocation.z] = cube
-    return cube
-    
-  def RemoveCube(cubeLocation as Vector3i):
-    cube = cubes[cubeLocation.x, cubeLocation.y, cubeLocation.z]
-    if cube == null:
-      raise System.Exception("Null cube found at ${cubeLocation}")
-
-    cubes[cubeLocation.x, cubeLocation.y, cubeLocation.z] = null
+    cube.Chunk = self
+    cube.Indexes = cubeLocation
     return cube

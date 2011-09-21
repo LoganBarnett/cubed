@@ -1,5 +1,3 @@
-namespace Cubed
-
 import UnityEngine
 import System.Collections.Generic
 

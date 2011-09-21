@@ -1,5 +1,3 @@
-namespace Cubed
-
 enum Direction:
   Left
   Right

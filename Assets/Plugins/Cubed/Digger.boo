@@ -1,5 +1,4 @@
 import UnityEngine
-import Cubed
 import System.Linq.Enumerable
 
 class Digger(MonoBehaviour):

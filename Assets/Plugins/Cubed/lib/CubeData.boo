@@ -1,5 +1,3 @@
-namespace Cubed
-
 class CubeData:
   [Property(Indexes)]
   public indexes as Vector3i

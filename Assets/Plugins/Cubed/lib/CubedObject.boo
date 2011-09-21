@@ -48,7 +48,8 @@ class CubedObject:
     if chunkVectors and chunkChunks:
       for i in range(0, chunkVectors.Count):
         chunk = chunkChunks[i]
-        chunk.cubes = allCubes
+#        chunk.cubes = allCubes
+        chunk.CubedObject = self
         chunks[chunkVectors[i]] = chunk
     
   def GenerateChunks(newDimensionsInChunks as Vector3i, cubes as (Cube, 3), offset as Vector3):
@@ -112,19 +113,28 @@ class CubedObject:
     chunk.Generate(cubes)
 
   
-  def PlaceCube(indexes as Vector3i, cube as GameObject):
+  def PlaceCube(indexes as Vector3i, cubeGameObject as GameObject):
     x = indexes.x / chunkDimensions.x
     y = indexes.y / chunkDimensions.y
     z = indexes.z / chunkDimensions.z
     chunk = chunks[Vector3i(x, y, z)]
-    chunk.AddCube(indexes, cube)
+    
+    originalCube = cubeGameObject.GetComponent of CubeBehaviour().cube
+    cube = Cube(Indexes: indexes, CubeWidth: cubeSize, Type: originalCube.Type)
+    cube.gameObject = cubeGameObject
+    
+    allCubes[indexes.x, indexes.y, indexes.z] = cube
+    
+    return chunk.AddCube(indexes, cube)
     
   def PlaceCube(indexes as Vector3i, cube as Cube):
     x = indexes.x / chunkDimensions.x
     y = indexes.y / chunkDimensions.y
     z = indexes.z / chunkDimensions.z
     chunk = chunks[Vector3i(x, y, z)]
-    chunk.AddCube(indexes, cube)
+    allCubes[indexes.x, indexes.y, indexes.z] = cube
+    
+    return chunk.AddCube(indexes, cube)
   
   def GetChunkAt(position as Vector3):
     x = position.x / (chunkDimensions.x  * cubeSize)
@@ -138,7 +148,19 @@ class CubedObject:
       return allCubes[gridPosition.x, gridPosition.y, gridPosition.z]
     except:
       raise System.IndexOutOfRangeException("Provided: ${gridPosition}\nDimensions: (${len(allCubes, 0)}, ${len(allCubes, 1)}, ${len(allCubes, 2)})")
-    
+  
+#  def GetCubeAt(cubeLocation as Vector3i):
+#    indexes = Vector3i(cubeLocation.x / cubeSize, cubeLocation.y / cubeSize, cubeLocation.z / cubeSize)
+#    cube = cubes[indexes.x, indexes.y, indexes.z]
+#    return cube
+  def RemoveCube(cubeLocation as Vector3i):
+    cube = allCubes[cubeLocation.x, cubeLocation.y, cubeLocation.z]
+    if cube == null:
+      raise System.Exception("Null cube found at ${cubeLocation}")
+
+    allCubes[cubeLocation.x, cubeLocation.y, cubeLocation.z] = null
+    return cube
+      
   def GetCubeAt(position as Vector3):
     #chunk = GetChunkAt(position)
     #cube = chunk.GetCubeAt(GetCubePointAt(position))
