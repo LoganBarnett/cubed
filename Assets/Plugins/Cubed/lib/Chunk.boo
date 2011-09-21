@@ -118,7 +118,8 @@ class Chunk(MonoBehaviour):
     raise System.Exception("Cannot add: A cube already exists at ${cubeLocation}") if cubes[cubeLocation.x, cubeLocation.y, cubeLocation.z]
     #newCubes = cubes.Clone() as (Cube, 3)
     originalCube = cubeGameObject.GetComponent of CubeBehaviour().cube
-    cube = Cube(Indexes: cubeLocation, CubeWidth: cubeSize, Chunk: self, GameObject: cubeGameObject, Type: originalCube.Type)
+    cube = Cube(Indexes: cubeLocation, CubeWidth: cubeSize, Chunk: self, Type: originalCube.Type)
+    cube.gameObject = cubeGameObject
     cubes[cubeLocation.x, cubeLocation.y, cubeLocation.z] = cube
     # TODO: Make a separate call
     Generate(cubes)

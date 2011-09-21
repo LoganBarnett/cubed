@@ -19,7 +19,7 @@ class Cube:
   public indexes as Vector3i
   [Property(Chunk)]
   public chunk as Chunk
-  [Property(GameObject)]
+  #[Property(GameObject)]
   public gameObject as GameObject
   public layer as LayerMask
   
@@ -28,6 +28,9 @@ class Cube:
   cubeSize as single
   
   generateCollider = false
+  
+  def ToCubeData():
+    return CubeData(Type: type, Indexes: indexes)
   
   def CreateCollision():
     self.gameObject = GameObject()
@@ -165,3 +168,5 @@ class Cube:
   
   def AdjacentCubeExists(cubes as (Cube, 3), adjacentPosition as Vector3i):
     return GetCube(cubes, adjacentPosition) != null
+    
+

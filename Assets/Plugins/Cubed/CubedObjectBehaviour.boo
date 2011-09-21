@@ -8,10 +8,10 @@ import Cubed
 #[RequireComponent(MeshFilter)]
 #[RequireComponent(MeshRenderer)]
 #[RequireComponent(MeshCollider)]
-[ExecuteInEditMode]
+#[ExecuteInEditMode]
 class CubedObjectBehaviour(MonoBehaviour): 
-  public chunkDimensions as Vector3i #=Vector3i(8,8,8)
-  public dimensionsInChunks as Vector3i #= Vector3i(1,1,1)
+  public chunkDimensions = Vector3i(8,8,8)
+  public dimensionsInChunks = Vector3i(1,1,1)
   public cubeSize = 1f
   public material as Material
   public cubeDefinitions as (CubeDefinition)

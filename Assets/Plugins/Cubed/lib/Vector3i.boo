@@ -1,5 +1,6 @@
 import UnityEngine;
 
+[System.Serializable]
 class Vector3i:
   public x = 0
   public y = 0

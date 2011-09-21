@@ -1,5 +1,3 @@
-namespace Cubed
-
 import UnityEngine
 import System.Linq.Enumerable
 import System.Collections.Generic
@@ -136,7 +134,10 @@ class CubedObject:
     return chunks[key]
     
   def GetCubeAt(gridPosition as Vector3i):
-    return allCubes[gridPosition.x, gridPosition.y, gridPosition.z]
+    try:
+      return allCubes[gridPosition.x, gridPosition.y, gridPosition.z]
+    except:
+      raise System.IndexOutOfRangeException("Provided: ${gridPosition}\nDimensions: (${len(allCubes, 0)}, ${len(allCubes, 1)}, ${len(allCubes, 2)})")
     
   def GetCubeAt(position as Vector3):
     #chunk = GetChunkAt(position)
