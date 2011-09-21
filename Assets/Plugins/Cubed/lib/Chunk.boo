@@ -121,16 +121,12 @@ class Chunk(MonoBehaviour):
     cube = Cube(Indexes: cubeLocation, CubeWidth: cubeSize, Chunk: self, Type: originalCube.Type)
     cube.gameObject = cubeGameObject
     cubes[cubeLocation.x, cubeLocation.y, cubeLocation.z] = cube
-    # TODO: Make a separate call
-    Generate(cubes)
     return cube
     
   def AddCube(cubeLocation as Vector3i, cube as Cube):
     # TODO: fix the error - this doesn't actually catch anything
     raise System.Exception("Cannot add: A cube already exists at ${cubeLocation}") if cubes[cubeLocation.x, cubeLocation.y, cubeLocation.z]
     cubes[cubeLocation.x, cubeLocation.y, cubeLocation.z] = cube
-    # TODO: Make a separate call
-    Generate(cubes)
     return cube
     
   def RemoveCube(cubeLocation as Vector3i):
