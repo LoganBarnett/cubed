@@ -59,12 +59,9 @@ class Chunk(MonoBehaviour):
     return cubes
   
   def Generate():
-    Debug.Log(cubeObject.Cubes != null)
-    
     Generate(cubeObject.Cubes)
     
   def Generate(cubesToGenerate as (Cube, 3)):
-    Debug.Log(cubesToGenerate != null)
     begin = gridPosition * dimensionsInCubes
     end = begin + dimensionsInCubes
 #    if cubes != null:
