@@ -11,6 +11,7 @@ class CubeDefinition:
   public right as Texture2D
   public top as Texture2D
   public bottom as Texture2D
+  public paint = false
   
   Textures as (Texture2D):
     get:

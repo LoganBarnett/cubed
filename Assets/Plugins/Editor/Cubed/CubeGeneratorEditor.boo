@@ -29,7 +29,7 @@ class CubeGeneratorEditor(Editor):
       Debug.LogError(e)
       
   static def PackTextures(cubedObject as CubedObjectBehaviour):
-    textureLists = cubedObject.cubeDefinitions.Select({cd| cd.Textures})
+    textureLists = cubedObject.cubeLegend.cubeDefinitions.Select({cd| cd.Textures})
     textures = List of Texture2D()
     for textureList in textureLists:
       textures.AddRange(textureList)

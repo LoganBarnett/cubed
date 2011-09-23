@@ -19,7 +19,7 @@ class CubedModelEditor(Editor):
       Debug.LogError(e)
 
   static def PackTextures(cubedObject as CubedObjectBehaviour):
-    textureLists = cubedObject.cubeDefinitions.Select({cd| cd.Textures})
+    textureLists = cubedObject.cubeLegend.cubeDefinitions.Select({cd| cd.Textures})
     textures = List of Texture2D()
     for textureList in textureLists:
       textures.AddRange(textureList)
@@ -134,7 +134,10 @@ class CubedModelEditor(Editor):
     y = cubedObject.transform.position.y + (axisY * cubedObject.cubeSize)
     placement = Vector3(hits[0].point.x, y, hits[0].point.z)
     
-    cube = cubedObject.PlaceCubeAt(placement, Cube())
+    type = cubedObject.cubeLegend.cubeDefinitions.First({cd| cd.paint}).type
+    cube = Cube(Type: type)
+
+    cubedObject.PlaceCubeAt(placement, cube)
     cubedObject.Generate()
     cubedObject.Save()
     
@@ -147,7 +150,7 @@ class CubedModelEditor(Editor):
     
     y = cubedObject.transform.position.y + (axisY * cubedObject.cubeSize)
     cubePosition = Vector3(hits[0].point.x, y, hits[0].point.z)
-    cube = cubedObject.RemoveCubeAt(cubePosition)
-    Debug.Log(cube != null)
+    cubedObject.RemoveCubeAt(cubePosition)
+
     cubedObject.Generate()
     cubedObject.Save()

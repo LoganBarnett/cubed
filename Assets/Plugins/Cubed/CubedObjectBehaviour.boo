@@ -11,7 +11,7 @@ class CubedObjectBehaviour(MonoBehaviour):
   public dimensionsInChunks = Vector3i(1,1,1)
   public cubeSize = 1f
   public material as Material
-  public cubeDefinitions as (CubeDefinition)
+  #public cubeDefinitions as (CubeDefinition)
   public packedTexture as Texture
   public textureAtlas as (Rect)
   public cubeLegend as CubeLegend
@@ -41,10 +41,9 @@ class CubedObjectBehaviour(MonoBehaviour):
   def Initialize():
     cubeDimensions = dimensionsInChunks * chunkDimensions
     allCubes = matrix(Cube, cubeDimensions.x, cubeDimensions.y, cubeDimensions.z)
-    if cubeVectors and cubeCubes:
-      for i in range(0, cubeVectors.Count):
-        indexes = cubeVectors[i]
-        allCubes[indexes.x, indexes.y, indexes.z] = cubeCubes[i]
+    if cubeCubes:
+      for cube in cubeCubes:
+        allCubes[cube.Indexes.x, cube.Indexes.y, cube.Indexes.z] = cube
 
     chunks = Dictionary[of Vector3i, Chunk]()
     if chunkVectors and chunkChunks:
@@ -56,7 +55,7 @@ class CubedObjectBehaviour(MonoBehaviour):
     
   def Generate(allCubes as (Cube, 3)):
     DestroyChildren() # patricide?
-    cubeLegend = CubeLegend(TextureAtlas: textureAtlas, CubeDefinitions: cubeDefinitions)
+    cubeLegend = CubeLegend(TextureAtlas: textureAtlas, CubeDefinitions: cubeLegend.cubeDefinitions)
     GenerateChunks(dimensionsInChunks, allCubes, transform.position)
     for chunk in Chunks.Values:
       chunk.Generate(Cubes)
