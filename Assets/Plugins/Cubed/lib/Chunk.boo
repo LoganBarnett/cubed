@@ -9,7 +9,7 @@ class Chunk(MonoBehaviour):
   public dimensionsInCubes as Vector3i
   
   [Property(CubedObject)]
-  cubeObject as CubedObject
+  cubeObject as CubedObjectBehaviour
   
   [Property(CubeWidth)]
   public cubeSize = 10f
@@ -110,13 +110,13 @@ class Chunk(MonoBehaviour):
     #for cube in cubes:
       #serializedCubes.Add(cube)
   
-  def AddCube(cubeLocation as Vector3i, cubeGameObject as GameObject):
-    originalCube = cubeGameObject.GetComponent of CubeBehaviour().cube
-    cube = Cube(Indexes: cubeLocation, CubeWidth: cubeSize, Chunk: self, Type: originalCube.Type)
-    cube.gameObject = cubeGameObject
-    return cube
-    
-  def AddCube(cubeLocation as Vector3i, cube as Cube):
-    cube.Chunk = self
-    cube.Indexes = cubeLocation
-    return cube
+#  def AddCube(cubeLocation as Vector3i, cubeGameObject as GameObject):
+#    originalCube = cubeGameObject.GetComponent of CubeBehaviour().cube
+#    cube = Cube(Indexes: cubeLocation, CubeWidth: cubeSize, Chunk: self, Type: originalCube.Type)
+#    cube.gameObject = cubeGameObject
+#    return cube
+#    
+#  def AddCube(cubeLocation as Vector3i, cube as Cube):
+#    cube.Chunk = self
+#    cube.Indexes = cubeLocation
+#    return cube

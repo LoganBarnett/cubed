@@ -43,8 +43,8 @@ class CubedModelEditor(Editor):
   def OnEnable():
     CubedEditorBackdrop.EnsureBackdropExists(target as CubedObjectBehaviour)
     cubedObject = target as CubedObjectBehaviour
-    cubedObject.cubedObject.Initialize()
-    cubes = cubedObject.cubedObject.Cubes
+    cubedObject.Initialize()
+    cubes = cubedObject.Cubes
     x = cubedObject.chunkDimensions.x * cubedObject.dimensionsInChunks.x
     y = cubedObject.chunkDimensions.y * cubedObject.dimensionsInChunks.y
     z = cubedObject.chunkDimensions.z * cubedObject.dimensionsInChunks.z
@@ -135,7 +135,7 @@ class CubedModelEditor(Editor):
     placement = Vector3(hits[0].point.x, y, hits[0].point.z)
     
     cube = cubedObject.PlaceCubeAt(placement, Cube())
-    cube.Chunk.Generate()
+    cubedObject.Generate()
     cubedObject.Save()
     
   def ChangeAxis():
@@ -149,5 +149,5 @@ class CubedModelEditor(Editor):
     cubePosition = Vector3(hits[0].point.x, y, hits[0].point.z)
     cube = cubedObject.RemoveCubeAt(cubePosition)
     Debug.Log(cube != null)
-    cube.Chunk.Generate()
-    
+    cubedObject.Generate()
+    cubedObject.Save()
