@@ -61,11 +61,12 @@ class CubedModelEditor(Editor):
     GameObject.DestroyImmediate(GameObject.Find("CubedEditorPlaneCollision"))
     
   def OnSceneGUI():
-    cubedObject = target as CubedObjectBehaviour
-    HandleInput(cubedObject)
-    DrawPaintingSelection(cubedObject)
-    controlId = GUIUtility.GetControlID(FocusType.Passive)
-    HandleUtility.AddDefaultControl(controlId) if Event.current.type == EventType.layout
+  	pass
+#    cubedObject = target as CubedObjectBehaviour
+#    HandleInput(cubedObject)
+#    DrawPaintingSelection(cubedObject)
+#    controlId = GUIUtility.GetControlID(FocusType.Passive)
+#    HandleUtility.AddDefaultControl(controlId) if Event.current.type == EventType.layout
     
 
   def DrawPaintingSelection(cubedObject as CubedObjectBehaviour):
@@ -135,7 +136,8 @@ class CubedModelEditor(Editor):
     placement = Vector3(hits[0].point.x, y, hits[0].point.z)
     
     type = cubedObject.cubeLegend.cubeDefinitions.First({cd| cd.paint}).type
-    cube = Cube(Type: type)
+    cube = Cube()
+    cube.type = type
 
     cubedObject.PlaceCubeAt(placement, cube)
     cubedObject.Generate()
