@@ -87,8 +87,14 @@ public class Chunk : MonoBehaviour {
 	    // sharedMesh is null during generation
 	    // TODO: Fix this as the generator shows errors in the console when using mesh vs. sharedMesh
 	    //mesh = (meshFilter.mesh if EditorApplication.isPlayingOrWillChangePlaymode else meshFilter.sharedMesh)
+#if UNITY_EDITOR
+		Mesh mesh = null;
+		if(Application.isPlaying) mesh = meshFilter.mesh;
+		else mesh = meshFilter.sharedMesh = new Mesh();
+#else
 	    var mesh = meshFilter.mesh;
-	    mesh.Clear();
+		mesh.Clear();
+#endif
 	    mesh.vertices = vertices.ToArray();
 	    mesh.triangles = triangles.ToArray();
 	    mesh.uv = uvs.ToArray();
