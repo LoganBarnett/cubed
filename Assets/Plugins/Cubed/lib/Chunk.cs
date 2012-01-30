@@ -94,17 +94,17 @@ public class Chunk : MonoBehaviour {
 	    mesh.uv = uvs.ToArray();
 	    mesh.RecalculateNormals();
 		
-		var meshCollider = GetComponent<MeshCollider>();
-		if (collidableVertices.Count > 0) {
-			if (meshCollider == null) meshCollider = gameObject.AddComponent<MeshCollider>();
-			var colliderMesh = new Mesh();
-			colliderMesh.vertices = collidableVertices.ToArray();
-			colliderMesh.triangles = collidableTriangles.ToArray();
-	    	meshCollider.sharedMesh = colliderMesh;
-	    	meshCollider.convex = false;
-			meshCollider.enabled = true;
-		} else {
-			if (meshCollider != null) meshCollider.enabled = false;
-		}
+//		var meshCollider = GetComponent<MeshCollider>();
+//		if (collidableVertices.Count > 0) {
+//			if (meshCollider == null) meshCollider = gameObject.AddComponent<MeshCollider>();
+//			var colliderMesh = new Mesh();
+//			colliderMesh.vertices = collidableVertices.ToArray();
+//			colliderMesh.triangles = collidableTriangles.ToArray();
+//	    	meshCollider.sharedMesh = colliderMesh;
+//	    	meshCollider.convex = false;
+//			meshCollider.enabled = true;
+//		} else {
+//			if (meshCollider != null) meshCollider.enabled = false;
+//		}
 	}
 }

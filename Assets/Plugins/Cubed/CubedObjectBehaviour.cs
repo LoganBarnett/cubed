@@ -74,6 +74,7 @@ public class CubedObjectBehaviour : MonoBehaviour {
 	public Cube RemoveCubeAt(Vector3i cubeLocation) {
 		var cube = allCubes[cubeLocation.x, cubeLocation.y, cubeLocation.z];
 		if (cube == null) throw new System.Exception(string.Format("Null cube found at {0}", cubeLocation));
+		if (cube.gameObject != null) Object.Destroy(cube.gameObject);
 		allCubes[cubeLocation.x, cubeLocation.y, cubeLocation.z] = null;
 		return cube;
 	}
@@ -98,9 +99,14 @@ public class CubedObjectBehaviour : MonoBehaviour {
 	public Cube PlaceCubeAt(Vector3i gridPosition, Cube cube) {
 		cube.indexes = gridPosition;
 		cube.cubeSize = cubeSize;
-		cube.chunk = chunks[(gridPosition / chunkDimensions).ToString()];
 		
 		allCubes[gridPosition.x, gridPosition.y, gridPosition.z] = cube;
+		Chunk chunk = null;
+		if (!chunks.TryGetValue((gridPosition / chunkDimensions).ToString(), out chunk)) {
+			var chunkGameObject = MakeChunk(gridPosition / chunkDimensions, transform.position);
+			chunk = chunkGameObject.GetComponent<Chunk>();
+		}
+		cube.chunk = chunk;
     	return cube;
 	}
 	
@@ -111,9 +117,16 @@ public class CubedObjectBehaviour : MonoBehaviour {
 		cube.cubeSize = cubeSize;
 		cube.type = originalCube.type;
     	cube.gameObject = cubeGameObject;
-		cube.chunk = chunks[(gridPosition / chunkDimensions).ToString()];
 
 	    allCubes[gridPosition.x, gridPosition.y, gridPosition.z] = cube;
+		
+		Chunk chunk = null;
+		if (!chunks.TryGetValue((gridPosition / chunkDimensions).ToString(), out chunk)) {
+			var chunkGameObject = MakeChunk(gridPosition / chunkDimensions, transform.position);
+			chunk = chunkGameObject.GetComponent<Chunk>();
+		}
+		cube.chunk = chunk;
+		
     	return cube;
 	}
 	
@@ -121,7 +134,7 @@ public class CubedObjectBehaviour : MonoBehaviour {
 		Generate(Cubes);
 	}
 	
-	GameObject MakeChunk() {
+	GameObject MakeChunk(Vector3i location, Vector3 offset) {
 		var chunkGameObject = new GameObject();
 	    chunkGameObject.AddComponent<MeshFilter>();
 	    chunkGameObject.AddComponent<MeshRenderer>();
@@ -134,6 +147,16 @@ public class CubedObjectBehaviour : MonoBehaviour {
 	    chunkComponent.cubeLegend = cubeLegend;
 	    chunkGameObject.transform.parent = gameObject.transform;
 	    //chunkGameObject.transform.localScale = Vector3.one
+		
+		chunkGameObject.transform.position = (new Vector3(location.x * chunkDimensions.x, location.y * chunkDimensions.y, location.z * chunkDimensions.z) * cubeSize) + offset;
+		chunkGameObject.name = string.Format("Chunk {0}, {1}, {2}", location.x, location.y, location.z);
+		var chunk = chunkGameObject.GetComponent<Chunk>();
+
+    	chunk.cubeObject = this;
+    	chunk.dimensionsInCubes = new Vector3i(chunkDimensions.x, chunkDimensions.y, chunkDimensions.z);
+	    chunk.gridPosition = location;
+	    chunks[location.ToString()] = chunk;
+		
 	    return chunkGameObject;
 	}
 	
@@ -203,15 +226,9 @@ public class CubedObjectBehaviour : MonoBehaviour {
 //    # Use UNITY_EDITOR
 //    #CubeGeneratorProgressEditor.ReportChunk(Vector3i(location.x, location.y, location.z))
 
-    	var chunkGameObject = MakeChunk();
-    	chunkGameObject.transform.position = (new Vector3(location.x * chunkDimensions.x, location.y * chunkDimensions.y, location.z * chunkDimensions.z) * cubeSize) + offset;
-    	chunkGameObject.name = string.Format("Chunk {0}, {1}, {2}", location.x, location.y, location.z);
+    	var chunkGameObject = MakeChunk(location, offset);
     	var chunk = chunkGameObject.GetComponent<Chunk>();
 
-    	chunk.cubeObject = this;
-    	chunk.dimensionsInCubes = new Vector3i(chunkDimensions.x, chunkDimensions.y, chunkDimensions.z);
-	    chunk.gridPosition = location;
-	    chunks[location.ToString()] = chunk;
 	    chunk.Generate(cubes);
 	}
 	

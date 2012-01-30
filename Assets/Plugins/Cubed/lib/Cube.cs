@@ -27,9 +27,9 @@ public class Cube {
 		collider.size = new Vector3(cubeSize, cubeSize, cubeSize);
 		var halfSize = collider.size / 2f;
 		var offsetInChunk = indexes * cubeSize;
-		if (chunk != null) {
-			var cubePosition = offsetInChunk + halfSize;
-			gameObject.transform.position = cubePosition.ToVector3();
+		if(chunk != null) {
+			var cubePosition = offsetInChunk.ToVector3() + halfSize;
+			gameObject.transform.position = cubePosition;
 			gameObject.transform.parent = chunk.transform;
 		}
 		
@@ -50,17 +50,19 @@ public class Cube {
 		
 		var meshData = new CubeMesh();
 		
-		if (!AdjacentCubeExists(cubes, indexes.Down))  AddSide(Direction.Down,  position, ref vertexCount, cubeLegend, meshData);
-		if (!AdjacentCubeExists(cubes, indexes.Up))	   AddSide(Direction.Up,    position, ref vertexCount, cubeLegend, meshData);
-		if (!AdjacentCubeExists(cubes, indexes.Right)) AddSide(Direction.Right, position, ref vertexCount, cubeLegend, meshData);
-		if (!AdjacentCubeExists(cubes, indexes.Left))  AddSide(Direction.Left,  position, ref vertexCount, cubeLegend, meshData);
-		if (!AdjacentCubeExists(cubes, indexes.Front)) AddSide(Direction.Front, position, ref vertexCount, cubeLegend, meshData);
-		if (!AdjacentCubeExists(cubes, indexes.Back))  AddSide(Direction.Back,  position, ref vertexCount, cubeLegend, meshData);
+		if (!AdjacentCubeExistsInsideChunk(cubes, indexes.Down))  AddSide(Direction.Down,  position, ref vertexCount, cubeLegend, meshData);
+		if (!AdjacentCubeExistsInsideChunk(cubes, indexes.Up))	   AddSide(Direction.Up,    position, ref vertexCount, cubeLegend, meshData);
+		if (!AdjacentCubeExistsInsideChunk(cubes, indexes.Right)) AddSide(Direction.Right, position, ref vertexCount, cubeLegend, meshData);
+		if (!AdjacentCubeExistsInsideChunk(cubes, indexes.Left))  AddSide(Direction.Left,  position, ref vertexCount, cubeLegend, meshData);
+		if (!AdjacentCubeExistsInsideChunk(cubes, indexes.Front)) AddSide(Direction.Front, position, ref vertexCount, cubeLegend, meshData);
+		if (!AdjacentCubeExistsInsideChunk(cubes, indexes.Back))  AddSide(Direction.Back,  position, ref vertexCount, cubeLegend, meshData);
 		
 		if (gameObject != null) {
 			generateCollider = true;
 			GameObject.Destroy(gameObject);
 		}
+		generateCollider = !AllAdjacentCubesExist(cubes);
+		if (generateCollider) CreateCollision();
 		return meshData;
 	}
 
@@ -112,7 +114,7 @@ public class Cube {
 		if (cubeLegend.cubeDefinitions[type].hasCollision) meshData.CollidableVertices.AddRange(vertices);
 		meshData.RenderableUvs.AddRange(cubeLegend.UvsFor(type, side));
 		AddTriangles(cubeLegend, meshData, vertexCount);
-		generateCollider = true;
+//		generateCollider = true;
 		vertexCount += 4;
 		return meshData;
 	}
@@ -123,7 +125,7 @@ public class Cube {
 		if (cubeLegend.cubeDefinitions[type].hasCollision) meshData.CollidableTriangles.AddRange(newTriangles);
 	}
 
-	public Cube GetCube(Cube[,,] cubes, Vector3i position) {
+	public Cube GetCubeInChunk(Cube[,,] cubes, Vector3i position) {
 		try {
 			var cube = cubes[position.x, position.y, position.z];
 			if (cube == null)
@@ -138,7 +140,27 @@ public class Cube {
 		}
 	}
 
-	public bool AdjacentCubeExists(Cube[,,] cubes, Vector3i adjacentPosition) {
-		return GetCube(cubes, adjacentPosition) != null;
+	public bool AdjacentCubeExistsInsideChunk(Cube[,,] cubes, Vector3i adjacentPosition) {
+		return GetCubeInChunk(cubes, adjacentPosition) != null;
+	}
+	
+	bool AllAdjacentCubesExist(Cube[,,] cubes) {
+		return  GetCube(cubes, indexes.Down) != null &&
+				GetCube(cubes, indexes.Up) != null &&
+				GetCube(cubes, indexes.Right) != null &&
+				GetCube(cubes, indexes.Left) != null &&
+				GetCube(cubes, indexes.Front) != null &&
+				GetCube(cubes, indexes.Back) != null;
+	}
+	
+	Cube GetCube(Cube[,,] cubes, Vector3i position) {
+		try {
+			var cube = cubes[position.x, position.y, position.z];
+			if (cube == null)
+				return null;
+			return cube;
+		} catch (System.IndexOutOfRangeException) {
+			return null;
+		}
 	}
 }
