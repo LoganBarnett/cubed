@@ -11,13 +11,14 @@ public class CubedObjectBehaviour : MonoBehaviour {
   	public Texture packedTexture;
   	public Rect[] textureAtlas;
   	public CubeLegend cubeLegend;
+	public bool useMeshColliders = true;
 			
   	// oh Unity, if only you could serialize Dictionaries, I would love you longer than the stars
   	// etc
-  	public List<Vector3i> chunkVectors;
-  	public List<Chunk> chunkChunks;
-  	public List<Vector3i> cubeVectors;
-  	public List<Cube> cubeCubes;
+	[HideInInspector] public List<Vector3i> chunkVectors;
+	[HideInInspector] public List<Chunk> chunkChunks;
+	[HideInInspector] public List<Vector3i> cubeVectors;
+	[HideInInspector] public List<Cube> cubeCubes;
 	
 	
 	Cube[,,] allCubes;

@@ -11,18 +11,19 @@ public class Chunk : MonoBehaviour {
 	public Material blockMaterial;
 	public CubeLegend cubeLegend;
 	
-	CubeMesh CalculateRenderableCube(Cube cube, ref int vertexCount, Cube[,,] cubes, Vector3i gridPosition) {
+	CubeMesh CalculateRenderableCube(Cube cube, ref int visualVertexCount, ref int collisionVertexCount, Cube[,,] cubes, Vector3i gridPosition) {
     	if (cube == null) return null;
 	    cube.cubeSize = cubeSize;
 	    cube.indexes = gridPosition;
 	    cube.chunk = this;
-	    var cubeMesh = cube.Calculate(cube.indexes, ref vertexCount, cubes, cubeLegend);
+	    var cubeMesh = cube.Calculate(cube.indexes, ref visualVertexCount, ref collisionVertexCount,cubes, cubeLegend, cubeObject.useMeshColliders);
 	    return cubeMesh;
 	}
 	
 	CubeMesh[,,] GenerateRenderableCubes(Cube[,,] cubes) {
 		var cubeMeshes = new CubeMesh[cubes.GetLength(0), cubes.GetLength(1), cubes.GetLength(2)];
-		var vertexCount = 0;
+		var visualVertexCount = 0;
+		var collisionVertexCount = 0;
 		var begin = gridPosition * dimensionsInCubes;
 		var end = begin + dimensionsInCubes;
 		for (var cubeX = begin.x; cubeX < end.x; ++cubeX) {
@@ -31,7 +32,7 @@ public class Chunk : MonoBehaviour {
 					var cube = cubes[cubeX, cubeY, cubeZ];
           			if (cube == null) continue;
           			var cubeGridPosition = new Vector3i(cubeX, cubeY, cubeZ);
-					var cubeMesh = CalculateRenderableCube(cube, ref vertexCount, cubes, cubeGridPosition);
+					var cubeMesh = CalculateRenderableCube(cube, ref visualVertexCount, ref collisionVertexCount, cubes, cubeGridPosition);
 					cubeMeshes[cubeX, cubeY, cubeZ] = cubeMesh;
           			cubes[cubeX, cubeY, cubeZ] = cube;
 				}
@@ -100,17 +101,21 @@ public class Chunk : MonoBehaviour {
 	    mesh.uv = uvs.ToArray();
 	    mesh.RecalculateNormals();
 		
-//		var meshCollider = GetComponent<MeshCollider>();
-//		if (collidableVertices.Count > 0) {
-//			if (meshCollider == null) meshCollider = gameObject.AddComponent<MeshCollider>();
-//			var colliderMesh = new Mesh();
-//			colliderMesh.vertices = collidableVertices.ToArray();
-//			colliderMesh.triangles = collidableTriangles.ToArray();
-//	    	meshCollider.sharedMesh = colliderMesh;
-//	    	meshCollider.convex = false;
-//			meshCollider.enabled = true;
-//		} else {
-//			if (meshCollider != null) meshCollider.enabled = false;
-//		}
+		
+		if(cubeObject.useMeshColliders) {
+			var meshCollider = GetComponent<MeshCollider>();
+			if (collidableVertices.Count > 0) {
+				if (meshCollider == null) meshCollider = gameObject.AddComponent<MeshCollider>();
+				var colliderMesh = new Mesh();
+				colliderMesh.vertices = collidableVertices.ToArray();
+				colliderMesh.triangles = collidableTriangles.ToArray();
+			   	meshCollider.sharedMesh = colliderMesh;
+			   	meshCollider.convex = false;
+				meshCollider.enabled = true;
+			} else {
+				if (meshCollider != null) meshCollider.enabled = false;
+			}
+		}
+		
 	}
 }
