@@ -18,6 +18,10 @@ public class Cube {
 	public CubeData ToCubeData() {
 		return new CubeData { Type = type, Indexes = indexes };
 	}
+	
+	public override string ToString() {
+		return string.Format("{0},{1},{2},{3}", indexes.x, indexes.y, indexes.z, type);
+	}
 
 	public void CreateCollision() {
 		if (gameObject != null) {

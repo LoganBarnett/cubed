@@ -101,7 +101,12 @@ public class CubedObjectBehaviour : MonoBehaviour {
 		cube.indexes = gridPosition;
 		cube.cubeSize = cubeSize;
 		
-		allCubes[gridPosition.x, gridPosition.y, gridPosition.z] = cube;
+		try {
+			allCubes[gridPosition.x, gridPosition.y, gridPosition.z] = cube;
+		} catch(System.IndexOutOfRangeException) {
+			Debug.LogError("Couldn't place cube at " + gridPosition);
+			throw;
+		}
 		Chunk chunk = null;
 		if (!chunks.TryGetValue((gridPosition / chunkDimensions).ToString(), out chunk)) {
 			var chunkGameObject = MakeChunk(gridPosition / chunkDimensions, transform.position);
