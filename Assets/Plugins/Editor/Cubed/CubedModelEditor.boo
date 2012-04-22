@@ -19,18 +19,8 @@ class CubedModelEditor(Editor):
       Debug.LogError(e)
 
   static def PackTextures(cubedObject as CubedObjectBehaviour):
-    textureLists = cubedObject.cubeLegend.cubeDefinitions.Select({cd| cd.Textures})
-    textures = List of Texture2D()
-    for textureList in textureLists:
-      textures.AddRange(textureList)
-    packedTexture = Texture2D(1024, 1024)
-    cubedObject.packedTexture = packedTexture
-    cubedObject.textureAtlas = packedTexture.PackTextures(textures.ToArray(), 1)
-    material = Material(cubedObject.material)
-    material.mainTexture = packedTexture
-    material.color = Color.white
-    cubedObject.material = material
-    Debug.Log("Packing ${textures.Count} Textures complete.")
+    count = cubedObject.PackTextures();
+    Debug.Log("Packing ${count} Textures complete.")
 
   def OnInspectorGUI():
     if (GUILayout.Button("Bake Cubes")):

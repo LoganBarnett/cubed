@@ -12,6 +12,8 @@ public class CubedObjectBehaviour : MonoBehaviour {
   	public Rect[] textureAtlas;
   	public CubeLegend cubeLegend;
 	public bool useMeshColliders = true;
+	public string chunkTag;
+	public string cubeTag;
 			
   	// oh Unity, if only you could serialize Dictionaries, I would love you longer than the stars
   	// etc
@@ -140,6 +142,19 @@ public class CubedObjectBehaviour : MonoBehaviour {
 		Generate(Cubes);
 	}
 	
+	public int PackTextures() {
+		var textureLists = cubeLegend.cubeDefinitions.Select(cd => cd.Textures);
+		var textures = new List<Texture2D>();
+		foreach(var textureList in textureLists) textures.AddRange(textureList);
+		var texture = new Texture2D(1024, 1024); // TODO: Figure out how big our texture needs to be
+		textureAtlas = texture.PackTextures(textures.ToArray(), 1);
+		cubeLegend.textureAtlas = textureAtlas.ToList();
+		material.mainTexture = texture;
+		packedTexture = texture; // for serialization
+		material.color = Color.white;
+		return textures.Count();
+	}
+	
 	GameObject MakeChunk(Vector3i location, Vector3 offset) {
 		var chunkGameObject = new GameObject();
 	    chunkGameObject.AddComponent<MeshFilter>();
@@ -149,7 +164,7 @@ public class CubedObjectBehaviour : MonoBehaviour {
 	    chunkComponent.cubeSize = cubeSize;
 	    chunkComponent.blockMaterial = material;
 	    chunkGameObject.name = "Chunk";
-	    chunkGameObject.tag = "cubed_chunk";
+	    chunkGameObject.tag = chunkTag;
 	    chunkComponent.cubeLegend = cubeLegend;
 	    chunkGameObject.transform.parent = gameObject.transform;
 	    //chunkGameObject.transform.localScale = Vector3.one
@@ -243,6 +258,7 @@ public class CubedObjectBehaviour : MonoBehaviour {
     	foreach (Transform childTransform in transform) {
       		children.Add(childTransform.gameObject);
 		}
-    	children.ForEach(child => GameObject.DestroyImmediate(child));
+		if(Application.isPlaying) children.ForEach(child => GameObject.Destroy(child));
+		else children.ForEach(child => GameObject.DestroyImmediate(child));
 	}
 }

@@ -11,9 +11,9 @@ public class Cube {
 	public GameObject gameObject;
 	public LayerMask layer;
 	public float cubeSize;
-
+	
+	bool generateCollider = true;
 	static int[] baseTriangles = new int[] { 0, 1, 2, 1, 3, 2 };
-	bool generateCollider = false;
 
 	public CubeData ToCubeData() {
 		return new CubeData { Type = type, Indexes = indexes };
@@ -23,29 +23,30 @@ public class Cube {
 		return string.Format("{0},{1},{2},{3}", indexes.x, indexes.y, indexes.z, type);
 	}
 
-	public void CreateCollision() {
+	public void CreateCollision(string cubeTag) {
 		if (gameObject != null) {
 			GameObject.Destroy(gameObject);
 		}
 		gameObject = new GameObject();
-		gameObject.tag = "cubed_cube";
+		gameObject.tag = cubeTag;
 		gameObject.AddComponent<BoxCollider>();
 		var collider = gameObject.collider as BoxCollider;
 		collider.size = new Vector3(cubeSize, cubeSize, cubeSize);
-		var halfSize = collider.size / 2f;
-		var offsetInChunk = indexes * cubeSize;
 		if(chunk != null) {
+			var halfSize = collider.size / 2f;
+			var offsetInChunk = (indexes - (chunk.gridPosition * chunk.dimensionsInCubes)) * cubeSize;
 			var cubePosition = offsetInChunk.ToVector3() + halfSize;
-			gameObject.transform.position = cubePosition;
 			gameObject.transform.parent = chunk.transform;
+			gameObject.transform.position = cubePosition + chunk.transform.position;
 		}
+//		(new Vector3(location.x * chunkDimensions.x, location.y * chunkDimensions.y, location.z * chunkDimensions.z) * cubeSize) + offset;
 		
 		gameObject.layer = layer;
 		gameObject.AddComponent<CubeBehaviour>().cube = this;
 		gameObject.name = GetCubeName(indexes);
 	}
 
-	public CubeMesh Calculate(Vector3i gridPosition, ref int visualVertexCount, ref int collisionVertexCount, Cube[,,] cubes, CubeLegend cubeLegend, bool useMeshColliders) {
+	public CubeMesh Calculate(Vector3i gridPosition, ref int visualVertexCount, ref int collisionVertexCount, Cube[,,] cubes, CubeLegend cubeLegend, bool useMeshColliders, string cubeTag) {
 		// TODO: Put this back in when preprocessor directives are supported in Boo
 		// Use UNITY_EDITOR
 		//CubeGeneratorProgressEditor.ReportCube(chunk.gridPosition, gridPosition) if chunk
@@ -75,7 +76,7 @@ public class Cube {
 			}
 			else {
 	//			generateCollider = !AllAdjacentCubesExist(cubes);
-				if (generateCollider) CreateCollision();
+				if(generateCollider) CreateCollision(cubeTag);
 			}
 		}
 		return meshData;

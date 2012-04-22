@@ -63,6 +63,10 @@ public class Vector3i {
 		return new Vector3i(left.x + i, left.y + i, left.z + i);
 	}
 	
+	public static Vector3i operator -(Vector3i left, Vector3i right) {
+		return new Vector3i(left.x - right.x, left.y - right.y, left.z - right.z);
+	}
+	
 	public static bool operator ==(Vector3i left, Vector3i right) {
 		var leftObject = left as object;
 		var rightObject = right as object;

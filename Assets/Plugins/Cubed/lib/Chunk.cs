@@ -16,7 +16,7 @@ public class Chunk : MonoBehaviour {
 	    cube.cubeSize = cubeSize;
 	    cube.indexes = gridPosition;
 	    cube.chunk = this;
-	    var cubeMesh = cube.Calculate(cube.indexes, ref visualVertexCount, ref collisionVertexCount,cubes, cubeLegend, cubeObject.useMeshColliders);
+	    var cubeMesh = cube.Calculate(cube.indexes, ref visualVertexCount, ref collisionVertexCount,cubes, cubeLegend, cubeObject.useMeshColliders, cubeObject.cubeTag);
 	    return cubeMesh;
 	}
 	
