@@ -34,10 +34,10 @@ public class Cube {
 		collider.size = new Vector3(cubeSize, cubeSize, cubeSize);
 		if(chunk != null) {
 			var halfSize = collider.size / 2f;
-			var offsetInChunk = (indexes - (chunk.gridPosition * chunk.dimensionsInCubes)) * cubeSize;
-			var cubePosition = offsetInChunk.ToVector3() + halfSize;
+			var offsetInChunk = (indexes - (chunk.gridPosition * chunk.dimensionsInCubes)).ToVector3() * cubeSize;
+			var cubePosition = offsetInChunk + halfSize;
 			gameObject.transform.parent = chunk.transform;
-			gameObject.transform.position = cubePosition + chunk.transform.position;
+			gameObject.transform.localPosition = cubePosition;
 		}
 //		(new Vector3(location.x * chunkDimensions.x, location.y * chunkDimensions.y, location.z * chunkDimensions.z) * cubeSize) + offset;
 		

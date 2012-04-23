@@ -147,6 +147,7 @@ public class CubedObjectBehaviour : MonoBehaviour {
 		var textures = new List<Texture2D>();
 		foreach(var textureList in textureLists) textures.AddRange(textureList);
 		var texture = new Texture2D(1024, 1024); // TODO: Figure out how big our texture needs to be
+//		texture.mipMapBias = -0.5f;
 		textureAtlas = texture.PackTextures(textures.ToArray(), 1);
 		cubeLegend.textureAtlas = textureAtlas.ToList();
 		material.mainTexture = texture;
