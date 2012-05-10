@@ -69,6 +69,10 @@ public class CubedObjectBehaviour : MonoBehaviour {
 		}
 	}
 	
+	public Vector3 GetWorldPositionOf(Vector3i indexes) {
+		return transform.position + (indexes * cubeSize).ToVector3();
+	}
+	
 	public Cube GetCubeAt(Vector3 position) {
 		var indexes = new Vector3i(position / cubeSize);
     	return GetCubeAt(indexes);
@@ -79,6 +83,8 @@ public class CubedObjectBehaviour : MonoBehaviour {
 		if (cube == null) throw new System.Exception(string.Format("Null cube found at {0}", cubeLocation));
 		if (cube.gameObject != null) Object.Destroy(cube.gameObject);
 		allCubes[cubeLocation.x, cubeLocation.y, cubeLocation.z] = null;
+		cube.indexes = cubeLocation;
+		SendMessage("OnCubeRemoved", cube, SendMessageOptions.DontRequireReceiver);
 		return cube;
 	}
 	
