@@ -181,6 +181,12 @@ public class Cube {
 		return cube != null && legend.cubeDefinitions[cube.type].hasCollision;
 	}
 	
+	public Vector3 WorldPosition {
+		get {
+			return chunk.cubeObject.GetWorldPositionOf(indexes);
+		}
+	}
+	
 //	bool AllAdjacentCubesExist(Cube[,,] cubes) {
 //		return  GetCube(cubes, indexes.Down) != null &&
 //				GetCube(cubes, indexes.Up) != null &&

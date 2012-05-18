@@ -1,10 +1,9 @@
 using UnityEngine;
 using System.Collections;
 
-[System.Serializable]
-public class CubeDefinition {
-	public int type = 0;
-	public string name = "cube";
+public class CubeDefinition : ScriptableObject {
+	public int id = 0;
+	public string friendlyName = "cube";
 	public bool hasCollision = false;
 	public Texture2D front;
 	public Texture2D back;
