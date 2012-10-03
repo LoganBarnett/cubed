@@ -36,11 +36,11 @@ return false
 ```
 ### C\# ###
 ```csharp
-var placeDistance = 5f
-var mask = 0 # can be omitted if not coming out of a capsule collider
+var placeDistance = 5f;
+var mask = 0; // can be omitted if not coming out of a capsule collider
 RaycastHit hit;
 if(Physics.Raycast(aimingRay, hit, placeDistance, ~mask)) {
-    worldPoint = hit.point - (aimingRay.direction * 0.001f) # need to underpenetrate a little
+    worldPoint = hit.point - (aimingRay.direction * 0.001f); // need to underpenetrate a little
 
     if(hit.collider.CompareTag("cubed_cube")) {
         cubedObject.PlaceCubeAt(worldPoint, cube);
@@ -68,8 +68,8 @@ BroadcastMessage("DigComplete", block, SendMessageOptions.DontRequireReceiver) u
 
 ### C\# ###
 ```csharp
-var distance = 5f
-var mask = 0 # can be omitted if not coming out of a capsule collider
+var distance = 5f;
+var mask = 0; // can be omitted if not coming out of a capsule collider
 RaycastHit hit;
 if(Physics.Raycast(ray, hit, distance, ~mask)) {
     var worldPoint = hit.point + (ray.direction * 0.1f); // need to overpenetrate a little
