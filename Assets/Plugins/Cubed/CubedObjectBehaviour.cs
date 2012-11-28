@@ -144,6 +144,26 @@ public class CubedObjectBehaviour : MonoBehaviour {
     	return cube;
 	}
 	
+	public Cube FindNearestCubeFrom(Vector3 worldPosition) {
+		var allCubes = new List<Cube>();
+		foreach(var cube in Cubes) {
+			allCubes.Add(cube);
+		}
+		var existingCubes = allCubes.Where(c => c != null);
+		if(existingCubes.Count() == 0) return null;
+		
+		var closestCube = existingCubes.First();
+		var closestDistance = Vector3.Distance(closestCube.WorldPosition, transform.position);
+		foreach(var cube in existingCubes) {
+			var distance = Vector3.Distance(cube.WorldPosition, transform.position);
+			if(distance < closestDistance) {
+				closestDistance = distance;
+				closestCube = cube;
+			}
+		}
+		return closestCube;
+	}
+	
 	public void Generate() {
 		Generate(Cubes);
 	}
@@ -194,11 +214,15 @@ public class CubedObjectBehaviour : MonoBehaviour {
 	}
 	
 	public void Save() {
+		if(cubeCubes == null) cubeCubes = new List<Cube>();
+		if(cubeVectors == null) cubeVectors = new List<Vector3i>();
 		cubeCubes.Clear();
     	cubeVectors.Clear();
-    	foreach (var cube in Cubes) {
+    	foreach(var cube in Cubes) {
       		cubeCubes.Add(cube);
-      		if (cube != null) cubeVectors.Add(cube.indexes);
+      		if(cube != null) cubeVectors.Add(cube.indexes);
+			
+			if(cube != null && cube.chunk == null) Debug.Log("chunk missing from a cube. How did this happen?");
 		}
 	}
 	
@@ -237,7 +261,7 @@ public class CubedObjectBehaviour : MonoBehaviour {
 	    chunkChunks = chunks.Values.ToList();
 	
 	    cubeVectors = new List<Vector3i>();
-	    cubeCubes = new List<Cube>();
+//	    cubeCubes = new List<Cube>();
 //	    foreach (var cube in cubes) {
 //	      if (cube == null) continue;
 //	      cubeCubes.Add(cube);

@@ -183,7 +183,7 @@ public class Cube {
 	
 	public Vector3 WorldPosition {
 		get {
-			return chunk.cubeObject.GetWorldPositionOf(indexes);
+			return chunk.GetWorldPositionOf(indexes);
 		}
 	}
 	
@@ -199,8 +199,7 @@ public class Cube {
 	Cube GetCube(Cube[,,] cubes, Vector3i position) {
 		try {
 			var cube = cubes[position.x, position.y, position.z];
-			if (cube == null)
-				return null;
+			if(cube == null) return null;
 			return cube;
 		} catch (System.IndexOutOfRangeException) {
 			return null;
