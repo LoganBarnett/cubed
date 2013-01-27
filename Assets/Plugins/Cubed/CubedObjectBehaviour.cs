@@ -11,9 +11,12 @@ public class CubedObjectBehaviour : MonoBehaviour {
   	public Texture packedTexture;
   	public Rect[] textureAtlas;
   	public CubeLegend cubeLegend;
-	public bool useMeshColliders = true;
+	public ColliderType colliderType = ColliderType.AxisAlignedBoundingBoxPerCube;
 	public string chunkTag;
 	public string cubeTag;
+	
+	public delegate void OnRemovedCubeHandler(Cube cube);
+	public OnRemovedCubeHandler OnRemovedCube;
 			
   	// oh Unity, if only you could serialize Dictionaries, I would love you longer than the stars
   	// etc
@@ -64,7 +67,7 @@ public class CubedObjectBehaviour : MonoBehaviour {
 		try {
 			return allCubes[gridPosition.x, gridPosition.y, gridPosition.z];
 		} catch (System.Exception) {
-			var message = string.Format("Provided: {0}\nDimensions: ({1}, {2}, {3)}", gridPosition, allCubes.GetLength(0), allCubes.GetLength(1), allCubes.GetLength(2));
+			var message = string.Format("Provided: {0}\nDimensions: ({1}, {2}, {3})", gridPosition, allCubes.GetLength(0), allCubes.GetLength(1), allCubes.GetLength(2));
 			throw new System.IndexOutOfRangeException(message);
 		}
 	}
@@ -73,9 +76,38 @@ public class CubedObjectBehaviour : MonoBehaviour {
 		return transform.position + (indexes * cubeSize).ToVector3();
 	}
 	
-	public Cube GetCubeAt(Vector3 position) {
-		var indexes = new Vector3i(position / cubeSize);
+	public Cube GetCubeAt(Vector3 worldPosition) {
+		var indexes = new Vector3i((worldPosition - transform.position) / cubeSize);
     	return GetCubeAt(indexes);
+	}
+	
+	public bool IsPositionWithinBounds(Vector3 worldPosition) {
+		try {
+			GetCubeAt(worldPosition);
+			return true;
+		}
+		catch(System.IndexOutOfRangeException) {
+			return false;
+		}
+	}
+	
+	public bool IsPositionOccupied(Vector3 worldPosition) {
+		if(colliderType == ColliderType.None) return false;
+		var cube = GetCubeAt(worldPosition);
+		if(cube == null) return false;
+		return cubeLegend.cubeDefinitions[cube.type].hasCollision;
+	}
+	
+	public bool IsPositionOccupied(Vector3 worldPosition, float radius) {
+		if(colliderType == ColliderType.None) return false;
+		var cubes = GetCubesInRadius(worldPosition, radius);
+		if(cubes.Count() == 0) return false;
+		return cubes.Any(c => cubeLegend.cubeDefinitions[c.type].hasCollision);
+	}
+	
+	public Cube[] GetCubesInRadius(Vector3 worldPosition, float radius) {
+		// TODO: Implement
+		return null;
 	}
 	
 	public Cube RemoveCubeAt(Vector3i cubeLocation) {
@@ -85,12 +117,12 @@ public class CubedObjectBehaviour : MonoBehaviour {
 		allCubes[cubeLocation.x, cubeLocation.y, cubeLocation.z] = null;
 		cube.indexes = cubeLocation;
 		SendMessage("OnCubeRemoved", cube, SendMessageOptions.DontRequireReceiver);
+		OnRemovedCube(cube);
 		return cube;
 	}
 	
 	public Cube RemoveCubeAt(Vector3 position) {
-		var relativePosition = position - transform.position;
-    	var cube = GetCubeAt(relativePosition);
+    	var cube = GetCubeAt(position);
     	if (cube == null) return null;
     	return RemoveCubeAt(cube.indexes);
 	}
@@ -287,7 +319,7 @@ public class CubedObjectBehaviour : MonoBehaviour {
 	void DestroyChildren() {
 		var children = new List<GameObject>();
     	foreach (Transform childTransform in transform) {
-      		children.Add(childTransform.gameObject);
+			if(childTransform.GetComponent<Chunk>() != null) children.Add(childTransform.gameObject);
 		}
 		if(Application.isPlaying) children.ForEach(child => GameObject.Destroy(child));
 		else children.ForEach(child => GameObject.DestroyImmediate(child));

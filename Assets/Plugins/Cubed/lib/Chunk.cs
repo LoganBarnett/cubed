@@ -73,18 +73,19 @@ public class Chunk : MonoBehaviour {
 	    mesh.RecalculateNormals();
 		
 		
-		if(cubeObject.useMeshColliders) {
+		if(cubeObject.colliderType == ColliderType.MeshColliderPerChunk) {
 			var meshCollider = GetComponent<MeshCollider>();
-			if (collidableVertices.Count > 0) {
-				if (meshCollider == null) meshCollider = gameObject.AddComponent<MeshCollider>();
+			if(collidableVertices.Count > 0) {
+				if(meshCollider == null) meshCollider = gameObject.AddComponent<MeshCollider>();
 				var colliderMesh = new Mesh();
 				colliderMesh.vertices = collidableVertices.ToArray();
 				colliderMesh.triangles = collidableTriangles.ToArray();
 			   	meshCollider.sharedMesh = colliderMesh;
 			   	meshCollider.convex = false;
 				meshCollider.enabled = true;
-			} else {
-				if (meshCollider != null) meshCollider.enabled = false;
+			}
+			else {
+				if(meshCollider != null) meshCollider.enabled = false;
 			}
 		}
 		
@@ -99,7 +100,7 @@ public class Chunk : MonoBehaviour {
 	    cube.cubeSize = cubeSize;
 	    cube.indexes = gridPosition;
 	    cube.chunk = this;
-	    var cubeMesh = cube.Calculate(cube.indexes, ref visualVertexCount, ref collisionVertexCount,cubes, cubeLegend, cubeObject.useMeshColliders, cubeObject.cubeTag);
+	    var cubeMesh = cube.Calculate(cube.indexes, ref visualVertexCount, ref collisionVertexCount,cubes, cubeLegend, cubeObject.colliderType, cubeObject.cubeTag);
 	    return cubeMesh;
 	}
 	

@@ -46,35 +46,35 @@ public class Cube {
 		gameObject.name = GetCubeName(indexes);
 	}
 
-	public CubeMesh Calculate(Vector3i gridPosition, ref int visualVertexCount, ref int collisionVertexCount, Cube[,,] cubes, CubeLegend cubeLegend, bool useMeshColliders, string cubeTag) {
+	public CubeMesh Calculate(Vector3i gridPosition, ref int visualVertexCount, ref int collisionVertexCount, Cube[,,] cubes, CubeLegend cubeLegend, ColliderType colliderType, string cubeTag) {
 		// TODO: Put this back in when preprocessor directives are supported in Boo
 		// Use UNITY_EDITOR
 		//CubeGeneratorProgressEditor.ReportCube(chunk.gridPosition, gridPosition) if chunk
 		
 		var chunkPosition = chunk == null ? Vector3.zero : chunk.transform.localPosition;
 		
-		if (indexes == null) indexes = new Vector3i();
+		if(indexes == null) indexes = new Vector3i();
 		var position = (indexes.ToVector3() * cubeSize) - chunkPosition;
 		
 		var meshData = new CubeMesh();
 		
-		if (!AdjacentCubeExistsInsideChunk(cubes, indexes.Down))  AddSide(Direction.Down,  position, ref visualVertexCount, cubeLegend, meshData);
-		if (!AdjacentCubeExistsInsideChunk(cubes, indexes.Up))	  AddSide(Direction.Up,    position, ref visualVertexCount, cubeLegend, meshData);
-		if (!AdjacentCubeExistsInsideChunk(cubes, indexes.Right)) AddSide(Direction.Right, position, ref visualVertexCount, cubeLegend, meshData);
-		if (!AdjacentCubeExistsInsideChunk(cubes, indexes.Left))  AddSide(Direction.Left,  position, ref visualVertexCount, cubeLegend, meshData);
-		if (!AdjacentCubeExistsInsideChunk(cubes, indexes.Front)) AddSide(Direction.Front, position, ref visualVertexCount, cubeLegend, meshData);
-		if (!AdjacentCubeExistsInsideChunk(cubes, indexes.Back))  AddSide(Direction.Back,  position, ref visualVertexCount, cubeLegend, meshData);
+		if(!AdjacentCubeExistsInsideChunk(cubes, indexes.Down))  AddSide(Direction.Down,  position, ref visualVertexCount, cubeLegend, meshData);
+		if(!AdjacentCubeExistsInsideChunk(cubes, indexes.Up))	  AddSide(Direction.Up,    position, ref visualVertexCount, cubeLegend, meshData);
+		if(!AdjacentCubeExistsInsideChunk(cubes, indexes.Right)) AddSide(Direction.Right, position, ref visualVertexCount, cubeLegend, meshData);
+		if(!AdjacentCubeExistsInsideChunk(cubes, indexes.Left))  AddSide(Direction.Left,  position, ref visualVertexCount, cubeLegend, meshData);
+		if(!AdjacentCubeExistsInsideChunk(cubes, indexes.Front)) AddSide(Direction.Front, position, ref visualVertexCount, cubeLegend, meshData);
+		if(!AdjacentCubeExistsInsideChunk(cubes, indexes.Back))  AddSide(Direction.Back,  position, ref visualVertexCount, cubeLegend, meshData);
 		
 		if (cubeLegend.cubeDefinitions[type].hasCollision) {
-			if(useMeshColliders) {
-				if (!AdjacentCubeExistsInsideChunkWithCollision(cubes, cubeLegend, indexes.Down))  AddCollisionSide(Direction.Down,  position, ref collisionVertexCount, cubeLegend, meshData);
-				if (!AdjacentCubeExistsInsideChunkWithCollision(cubes, cubeLegend, indexes.Up))	   AddCollisionSide(Direction.Up,    position, ref collisionVertexCount, cubeLegend, meshData);
-				if (!AdjacentCubeExistsInsideChunkWithCollision(cubes, cubeLegend, indexes.Right)) AddCollisionSide(Direction.Right, position, ref collisionVertexCount, cubeLegend, meshData);
-				if (!AdjacentCubeExistsInsideChunkWithCollision(cubes, cubeLegend, indexes.Left))  AddCollisionSide(Direction.Left,  position, ref collisionVertexCount, cubeLegend, meshData);
-				if (!AdjacentCubeExistsInsideChunkWithCollision(cubes, cubeLegend, indexes.Front)) AddCollisionSide(Direction.Front, position, ref collisionVertexCount, cubeLegend, meshData);
-				if (!AdjacentCubeExistsInsideChunkWithCollision(cubes, cubeLegend, indexes.Back))  AddCollisionSide(Direction.Back,  position, ref collisionVertexCount, cubeLegend, meshData);
+			if(colliderType == ColliderType.MeshColliderPerChunk) {
+				if(!AdjacentCubeExistsInsideChunkWithCollision(cubes, cubeLegend, indexes.Down))  AddCollisionSide(Direction.Down,  position, ref collisionVertexCount, cubeLegend, meshData);
+				if(!AdjacentCubeExistsInsideChunkWithCollision(cubes, cubeLegend, indexes.Up))	   AddCollisionSide(Direction.Up,    position, ref collisionVertexCount, cubeLegend, meshData);
+				if(!AdjacentCubeExistsInsideChunkWithCollision(cubes, cubeLegend, indexes.Right)) AddCollisionSide(Direction.Right, position, ref collisionVertexCount, cubeLegend, meshData);
+				if(!AdjacentCubeExistsInsideChunkWithCollision(cubes, cubeLegend, indexes.Left))  AddCollisionSide(Direction.Left,  position, ref collisionVertexCount, cubeLegend, meshData);
+				if(!AdjacentCubeExistsInsideChunkWithCollision(cubes, cubeLegend, indexes.Front)) AddCollisionSide(Direction.Front, position, ref collisionVertexCount, cubeLegend, meshData);
+				if(!AdjacentCubeExistsInsideChunkWithCollision(cubes, cubeLegend, indexes.Back))  AddCollisionSide(Direction.Back,  position, ref collisionVertexCount, cubeLegend, meshData);
 			}
-			else {
+			else if(colliderType == ColliderType.BoxColliderPerCube) {
 	//			generateCollider = !AllAdjacentCubesExist(cubes);
 				if(generateCollider) CreateCollision(cubeTag);
 			}
