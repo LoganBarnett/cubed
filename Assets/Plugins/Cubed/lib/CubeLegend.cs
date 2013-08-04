@@ -1,10 +1,15 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 [System.Serializable]
 public class CubeLegend {
 	public List<CubeDefinition> cubeDefinitions; 
 	public List<Rect> textureAtlas;
+	
+	public void Initialize() {
+		if(cubeDefinitions == null) cubeDefinitions = new List<CubeDefinition>();
+	}
 	
 	public List<Vector2> UvsFor(int type, Direction side) {
 		var coords = textureAtlas[(int)side + (type * 6)];
@@ -21,5 +26,12 @@ public class CubeLegend {
 			uvs.AddRange(UvsFor(type, (Direction)i));
 		}
 		return uvs.ToArray();
+	}
+	
+	public CubeLegend Clone() {
+		return new CubeLegend {
+			cubeDefinitions = cubeDefinitions.Select(def => def.Clone()).ToList(),
+			textureAtlas = textureAtlas.Select(atlas => atlas).ToList(),
+		};
 	}
 }

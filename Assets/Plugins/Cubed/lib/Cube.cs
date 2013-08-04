@@ -23,7 +23,7 @@ public class Cube {
 		return string.Format("{0},{1},{2},{3}", indexes.x, indexes.y, indexes.z, type);
 	}
 
-	public void CreateCollision(string cubeTag) {
+	public void CreateCollision(string cubeTag, ChunkBehaviour chunkBehaviour) {
 		if (gameObject != null) {
 			GameObject.Destroy(gameObject);
 		}
@@ -36,7 +36,7 @@ public class Cube {
 			var halfSize = collider.size / 2f;
 			var offsetInChunk = (indexes - (chunk.gridPosition * chunk.dimensionsInCubes)).ToVector3() * cubeSize;
 			var cubePosition = offsetInChunk + halfSize;
-			gameObject.transform.parent = chunk.transform;
+			gameObject.transform.parent = chunkBehaviour.transform;
 			gameObject.transform.localPosition = cubePosition;
 		}
 //		(new Vector3(location.x * chunkDimensions.x, location.y * chunkDimensions.y, location.z * chunkDimensions.z) * cubeSize) + offset;
@@ -46,15 +46,14 @@ public class Cube {
 		gameObject.name = GetCubeName(indexes);
 	}
 
-	public CubeMesh Calculate(Vector3i gridPosition, ref int visualVertexCount, ref int collisionVertexCount, Cube[,,] cubes, CubeLegend cubeLegend, ColliderType colliderType, string cubeTag) {
+	public CubeMesh Calculate(ref int visualVertexCount, ref int collisionVertexCount, Cube[,,] cubes, CubeLegend cubeLegend, ColliderType colliderType, string cubeTag) {
 		// TODO: Put this back in when preprocessor directives are supported in Boo
 		// Use UNITY_EDITOR
 		//CubeGeneratorProgressEditor.ReportCube(chunk.gridPosition, gridPosition) if chunk
 		
-		var chunkPosition = chunk == null ? Vector3.zero : chunk.transform.localPosition;
-		
-		if(indexes == null) indexes = new Vector3i();
-		var position = (indexes.ToVector3() * cubeSize) - chunkPosition;
+		// TODO: Vector3i.zero
+		// TODO: Cached cube position of the chunk
+		var position = (indexes - (chunk.dimensionsInCubes * chunk.gridPosition)).ToVector3() * cubeSize;
 		
 		var meshData = new CubeMesh();
 		
@@ -75,8 +74,8 @@ public class Cube {
 				if(!AdjacentCubeExistsInsideChunkWithCollision(cubes, cubeLegend, indexes.Back))  AddCollisionSide(Direction.Back,  position, ref collisionVertexCount, cubeLegend, meshData);
 			}
 			else if(colliderType == ColliderType.BoxColliderPerCube) {
-	//			generateCollider = !AllAdjacentCubesExist(cubes);
-				if(generateCollider) CreateCollision(cubeTag);
+				// TODO: Defer this until the game objects are being created for async compatibility
+//				if(generateCollider) CreateCollision(cubeTag);
 			}
 		}
 		return meshData;

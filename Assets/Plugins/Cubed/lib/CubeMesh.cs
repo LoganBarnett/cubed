@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
+
+[System.Serializable]
 public class CubeMesh {
 	public List<int> RenderableTriangles { get; set; }
 	public List<Vector3> RenderableVertices { get; set; }

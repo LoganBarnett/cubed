@@ -2,7 +2,8 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Chunk : MonoBehaviour {
+[System.Serializable]
+public class Chunk {
 	public Vector3i gridPosition;
   	public Vector3i dimensionsInCubes;
 	
@@ -10,6 +11,7 @@ public class Chunk : MonoBehaviour {
 	public float cubeSize = 10f;
 	public Material blockMaterial;
 	public CubeLegend cubeLegend;
+	public CubeMesh meshData;
 	
 	public void Generate() {
 		Generate(cubeObject.Cubes);
@@ -19,21 +21,33 @@ public class Chunk : MonoBehaviour {
 		var begin = gridPosition * dimensionsInCubes;
 		var end = begin + dimensionsInCubes;
 		
+		// TODO: We should be able to force this upon cube addition.
 		for (var x = begin.x; x < end.x; ++x) {
       		for (var y = begin.y; y < end.y; ++y) {
         		for (var z = begin.z; z < end.z; ++z) {
-          			if (cubesToGenerate[x,y,z] != null) cubesToGenerate[x,y,z].chunk = this;
+#if DEBUG
+					try {
+#endif
+						if(cubesToGenerate[x,y,z] != null) cubesToGenerate[x,y,z].chunk = this;
+#if DEBUG
+					}
+					catch(System.IndexOutOfRangeException) {
+						var location = new Vector3i(x, y, z);
+						var message = string.Format(
+							"Couldn't find cube at {0}. Perhaps the cube array is out of sync? Dimensions: {0}",
+							location,
+							cubeObject.TotalDimensions
+						);
+						Debug.LogError(message);
+						throw;
+					}
+#endif
 				}
 			}
 		}
 
 	    var cubeMeshes = GenerateRenderableCubes(cubesToGenerate);
-	    var vertices = new List<Vector3>();
-	    var triangles = new List<int>();
-	    var uvs = new List<Vector2>();
-		
-		var collidableVertices = new List<Vector3>();
-		var collidableTriangles = new List<int>();
+	    meshData = new CubeMesh();
 	    //for block in cubes: // works well for matrixes
 	
 		for (var x = begin.x; x < end.x; ++x) {
@@ -43,52 +57,16 @@ public class Chunk : MonoBehaviour {
 		        	if (cube == null) continue;
 					cube.chunk = this;
 					var cubeMesh = cubeMeshes[x, y, z];
-		        	vertices.AddRange(cubeMesh.RenderableVertices);
-		        	triangles.AddRange(cubeMesh.RenderableTriangles);
-		        	uvs.AddRange(cubeMesh.RenderableUvs);
+					// TODO: Make a CubeMesh.AddFrom(CubeMesh)
+		        	meshData.RenderableVertices.AddRange(cubeMesh.RenderableVertices);
+		        	meshData.RenderableTriangles.AddRange(cubeMesh.RenderableTriangles);
+		        	meshData.RenderableUvs.AddRange(cubeMesh.RenderableUvs);
 					
-					collidableVertices.AddRange(cubeMesh.CollidableVertices);
-					collidableTriangles.AddRange(cubeMesh.CollidableTriangles);
+					meshData.CollidableVertices.AddRange(cubeMesh.CollidableVertices);
+					meshData.CollidableTriangles.AddRange(cubeMesh.CollidableTriangles);
 				}
 			}
 		}
-	
-	    renderer.materials = new Material[] { blockMaterial };
-	    
-	    var meshFilter = GetComponent<MeshFilter>();
-	    // sharedMesh is null during generation
-	    // TODO: Fix this as the generator shows errors in the console when using mesh vs. sharedMesh
-	    //mesh = (meshFilter.mesh if EditorApplication.isPlayingOrWillChangePlaymode else meshFilter.sharedMesh)
-#if UNITY_EDITOR
-		Mesh mesh = null;
-		if(Application.isPlaying) mesh = meshFilter.mesh;
-		else mesh = meshFilter.sharedMesh = new Mesh();
-#else
-	    var mesh = meshFilter.mesh;
-#endif
-		mesh.Clear();
-	    mesh.vertices = vertices.ToArray();
-	    mesh.triangles = triangles.ToArray();
-	    mesh.uv = uvs.ToArray();
-	    mesh.RecalculateNormals();
-		
-		
-		if(cubeObject.colliderType == ColliderType.MeshColliderPerChunk) {
-			var meshCollider = GetComponent<MeshCollider>();
-			if(collidableVertices.Count > 0) {
-				if(meshCollider == null) meshCollider = gameObject.AddComponent<MeshCollider>();
-				var colliderMesh = new Mesh();
-				colliderMesh.vertices = collidableVertices.ToArray();
-				colliderMesh.triangles = collidableTriangles.ToArray();
-			   	meshCollider.sharedMesh = colliderMesh;
-			   	meshCollider.convex = false;
-				meshCollider.enabled = true;
-			}
-			else {
-				if(meshCollider != null) meshCollider.enabled = false;
-			}
-		}
-		
 	}
 	
 	public Vector3 GetWorldPositionOf(Vector3i indexes) {
@@ -98,9 +76,10 @@ public class Chunk : MonoBehaviour {
 	CubeMesh CalculateRenderableCube(Cube cube, ref int visualVertexCount, ref int collisionVertexCount, Cube[,,] cubes, Vector3i gridPosition) {
     	if (cube == null) return null;
 	    cube.cubeSize = cubeSize;
+		
 	    cube.indexes = gridPosition;
 	    cube.chunk = this;
-	    var cubeMesh = cube.Calculate(cube.indexes, ref visualVertexCount, ref collisionVertexCount,cubes, cubeLegend, cubeObject.colliderType, cubeObject.cubeTag);
+	    var cubeMesh = cube.Calculate(ref visualVertexCount, ref collisionVertexCount,cubes, cubeLegend, cubeObject.colliderType, cubeObject.cubeTag);
 	    return cubeMesh;
 	}
 	

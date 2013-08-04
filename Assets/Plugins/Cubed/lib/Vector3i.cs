@@ -39,6 +39,10 @@ public class Vector3i {
 		return new Vector3(x, y, z);
 	}
 	
+	public Vector3i Clone() {
+		return new Vector3i(x, y, z);
+	}
+	
 	public static Vector3i operator *(Vector3i left, Vector3i right) {
 		return new Vector3i(left.x * right.x, left.y * right.y, left.z * right.z);
 	}
@@ -65,6 +69,14 @@ public class Vector3i {
 	
 	public static Vector3i operator -(Vector3i left, Vector3i right) {
 		return new Vector3i(left.x - right.x, left.y - right.y, left.z - right.z);
+	}
+	
+	public static Vector3i operator /(Vector3i numerator, float denominator) {
+		return new Vector3i(numerator.x / denominator, numerator.y / denominator, numerator.z / denominator);
+	}
+	
+	public static Vector3i operator /(Vector3i numerator, int denominator) {
+		return new Vector3i(numerator.x / denominator, numerator.y / denominator, numerator.z / denominator);
 	}
 	
 	public static bool operator ==(Vector3i left, Vector3i right) {

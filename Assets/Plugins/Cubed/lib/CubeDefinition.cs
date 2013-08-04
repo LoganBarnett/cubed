@@ -14,4 +14,19 @@ public class CubeDefinition : ScriptableObject {
 	public bool paint = false;
 	
 	public Texture2D[] Textures { get { return new Texture2D[] { front, back, left, right, top, bottom }; } }
+	
+	public CubeDefinition Clone() {
+		var clone = ScriptableObject.CreateInstance<CubeDefinition>();
+		clone.id = id;
+		clone.friendlyName = friendlyName;
+		clone.hasCollision = hasCollision;
+		clone.front = front;
+		clone.back = back;
+		clone.left = left;
+		clone.right = right;
+		clone.top = top;
+		clone.bottom = bottom;
+		clone.paint = paint;
+		return clone;
+	}
 }
