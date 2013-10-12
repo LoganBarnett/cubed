@@ -99,6 +99,10 @@ public class Vector3i {
     	return left.x != right.x || left.y != right.y || left.z != right.z;
 	}
 	
+	public static Vector3i RoundFromVector3(Vector3 vector) {
+		return new Vector3i(Mathf.Round(vector.x), Mathf.Round(vector.y), Mathf.Round(vector.z)); 
+	}
+	
 	public override bool Equals(object obj)
 	{
 		return base.Equals(obj);
